@@ -5,14 +5,14 @@ const Hero = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4 text-center max-w-4xl">
-        <Badge variant="secondary" className="mb-6">
-          New • CoMiSS PDF v2
-        </Badge>
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-          Build and export <span className="text-secondary">clinical-grade</span> CoMiSS reports.
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight text-secondary">
+          Evaluate. Score. Share.
         </h1>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Streamlined infant symptom assessment: consistent scoring, clear interpretation, secure export.
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
+          Your CoMiSS® Digital Tool
+        </h2>
+        <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Developed by Pharmalys Laboratories to simplify CoMiSS® assessments and reporting
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Button size="lg" className="bg-primary hover:bg-primary/90">

@@ -321,13 +321,13 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
             {/* Symptoms */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Symptoms (CoMiSS)</h3>
-              <p className="text-sm text-muted-foreground mb-4">Assessed ≥1 week • No infectious disease</p>
+              <h3 className="text-lg font-semibold mb-2">Symptoms</h3>
+              <p className="text-sm text-muted-foreground mb-4">Assessed by parents without any obvious cause (≥1 week duration, no infectious disease)</p>
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="crying">Crying (≥1 week)</Label>
-                  <p className="text-xs text-muted-foreground mb-2">Assessed by parents • ≥1 week</p>
+                  <Label htmlFor="crying">Crying</Label>
+                  <p className="text-xs text-muted-foreground mb-2">Assessed by parents • ≥ 1 week duration</p>
                   <Select value={cryingScore} onValueChange={setCryingScore}>
                     <SelectTrigger>
                       <SelectValue placeholder="≤ 1 h/day (0)" />
@@ -346,6 +346,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
                 <div>
                   <Label htmlFor="regurgitation">Regurgitation</Label>
+                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration</p>
                   <Select value={regurgitationScore} onValueChange={setRegurgitationScore}>
                     <SelectTrigger>
                       <SelectValue placeholder="None/rare (0)" />
@@ -362,6 +363,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
                 <div>
                   <Label htmlFor="stool">Stools</Label>
+                  <p className="text-xs text-muted-foreground mb-2">Brussels Infant and Toddlers Stool Scale (BITSS)</p>
                   <Select value={stoolScore} onValueChange={setStoolScore}>
                     <SelectTrigger>
                       <SelectValue placeholder="Normal (0)" />
@@ -377,7 +379,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                 </div>
 
                 <div>
-                  <Label htmlFor="skin">Skin Symptoms</Label>
+                  <Label htmlFor="skin">Skin (Atopic Eczema)</Label>
+                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration</p>
                   <Select value={skinScore} onValueChange={setSkinScore}>
                     <SelectTrigger>
                       <SelectValue placeholder="None (0)" />
@@ -393,6 +396,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
                 <div>
                   <Label htmlFor="respiratory">Respiratory Symptoms</Label>
+                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration</p>
                   <Select value={respiratoryScore} onValueChange={setRespiratoryScore}>
                     <SelectTrigger>
                       <SelectValue placeholder="None (0)" />

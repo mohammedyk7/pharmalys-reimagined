@@ -35,7 +35,7 @@ export type Database = {
           stool_score: number
           total_score: number | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           assessment_date: string
@@ -57,7 +57,7 @@ export type Database = {
           stool_score: number
           total_score?: number | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           assessment_date?: string
@@ -79,7 +79,7 @@ export type Database = {
           stool_score?: number
           total_score?: number | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

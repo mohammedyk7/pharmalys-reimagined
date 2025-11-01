@@ -30,7 +30,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   const [guardianPhone, setGuardianPhone] = useState("");
   const [clinicianName, setClinicianName] = useState("");
   const [hospital, setHospital] = useState("");
-  const [location, setLocation] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
   const [cryingScore, setCryingScore] = useState("0");
   const [regurgitationScore, setRegurgitationScore] = useState("0");
   const [stoolScore, setStoolScore] = useState("0");
@@ -54,6 +55,36 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   };
 
   const analysis = getAnalysis();
+
+  // Countries list
+  const countries = [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
+    "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia",
+    "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica",
+    "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt",
+    "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon",
+    "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana",
+    "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel",
+    "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos",
+    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi",
+    "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
+    "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands",
+    "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau",
+    "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania",
+    "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal",
+    "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
+    "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
+    "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu",
+    "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela",
+    "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+  ];
+
+  // Omani governorates
+  const omaniGovernorates = [
+    "Muscat", "Dhofar", "Musandam", "Al Buraimi", "Ad Dakhiliyah", "Ad Dhahirah", 
+    "Ash Sharqiyah North", "Ash Sharqiyah South", "Al Batinah North", "Al Batinah South", "Al Wusta"
+  ];
 
   const handleSave = async () => {
     console.log("Save button clicked");
@@ -92,7 +123,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
         guardian_phone: guardianPhone,
         clinician_name: clinicianName,
         hospital_clinic: hospital,
-        location: location || null,
+        country: country || null,
+        city: city || null,
         crying_score: parseInt(cryingScore),
         regurgitation_score: parseInt(regurgitationScore),
         stool_score: parseInt(stoolScore),
@@ -174,9 +206,13 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     doc.text(`Clinician: ${clinicianName}`, 15, y);
     y += 6;
     doc.text(`Hospital/Clinic: ${hospital}`, 15, y);
-    if (location) {
+    if (country) {
       y += 6;
-      doc.text(`Location: ${location}`, 15, y);
+      doc.text(`Country: ${country}`, 15, y);
+    }
+    if (city) {
+      y += 6;
+      doc.text(`City: ${city}`, 15, y);
     }
     
     // CoMiSS Scores
@@ -312,14 +348,43 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                     onChange={(e) => setHospital(e.target.value)}
                   />
                 </div>
-                <div className="md:col-span-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input 
-                    id="location" 
-                    placeholder="City, country (optional)" 
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
+                <div>
+                  <Label htmlFor="country">Country</Label>
+                  <Select value={country} onValueChange={(value) => {
+                    setCountry(value);
+                    if (value !== "Oman") {
+                      setCity("");
+                    }
+                  }}>
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50 max-h-[300px]">
+                      {countries.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="city">City / Governorate</Label>
+                  <Select 
+                    value={city} 
+                    onValueChange={setCity}
+                    disabled={country !== "Oman"}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <SelectValue placeholder={country === "Oman" ? "Select governorate" : "Select Oman first"} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      {omaniGovernorates.map((gov) => (
+                        <SelectItem key={gov} value={gov}>{gov}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {country === "Oman" ? "Select your governorate" : "Only available when Oman is selected"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -490,7 +555,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                     setGuardianPhone("");
                     setClinicianName("");
                     setHospital("");
-                    setLocation("");
+                    setCountry("");
+                    setCity("");
                     setCryingScore("0");
                     setRegurgitationScore("0");
                     setStoolScore("0");

@@ -25,6 +25,7 @@ export type Database = {
           hospital_clinic: string
           id: string
           location: string | null
+          notes: string | null
           patient_age_months: number
           patient_gender: string
           patient_name: string
@@ -46,6 +47,7 @@ export type Database = {
           hospital_clinic: string
           id?: string
           location?: string | null
+          notes?: string | null
           patient_age_months: number
           patient_gender: string
           patient_name: string
@@ -67,6 +69,7 @@ export type Database = {
           hospital_clinic?: string
           id?: string
           location?: string | null
+          notes?: string | null
           patient_age_months?: number
           patient_gender?: string
           patient_name?: string

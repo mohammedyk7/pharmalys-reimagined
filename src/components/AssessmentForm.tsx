@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
@@ -33,12 +36,35 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
   const [stoolScore, setStoolScore] = useState("0");
   const [skinScore, setSkinScore] = useState("0");
   const [respiratoryScore, setRespiratoryScore] = useState("0");
+  const [notes, setNotes] = useState("");
+  const [consent, setConsent] = useState(false);
+
+  const totalScore = parseInt(cryingScore) + parseInt(regurgitationScore) + 
+                     parseInt(stoolScore) + parseInt(skinScore) + parseInt(respiratoryScore);
+  const maxScore = 33;
+
+  const getAnalysis = () => {
+    if (totalScore <= 10) {
+      return { text: "Low likelihood of CMPA", recommendation: "Continue monitoring" };
+    } else if (totalScore <= 15) {
+      return { text: "Moderate likelihood of CMPA", recommendation: "Consider dietary changes" };
+    } else {
+      return { text: "High likelihood of CMPA", recommendation: "Consider referral" };
+    }
+  };
+
+  const analysis = getAnalysis();
 
   const handleSave = async () => {
     // Validation
     if (!patientName || !gender || !age || !guardianName || !guardianPhone || 
         !clinicianName || !hospital) {
       toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (!consent) {
+      toast.error("Please accept the consent form");
       return;
     }
 
@@ -61,6 +87,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
           stool_score: parseInt(stoolScore),
           skin_score: parseInt(skinScore),
           respiratory_score: parseInt(respiratoryScore),
+          notes: notes || null,
         })
         .select()
         .single();
@@ -366,42 +393,91 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
 
             <Separator />
 
+            {/* Notes */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Notes</h3>
+              <Textarea 
+                placeholder="Extra comments..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+
+            {/* Analysis Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">{totalScore} / {maxScore}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    {analysis.text} — {gender || "Patient"}
+                  </span>
+                </div>
+              </div>
+              <Progress value={(totalScore / maxScore) * 100} className="h-2" />
+              <p className="text-sm text-muted-foreground">{analysis.recommendation}</p>
+            </div>
+
+            {/* Consent */}
+            <div className="flex items-start gap-3">
+              <Checkbox 
+                id="consent" 
+                checked={consent}
+                onCheckedChange={(checked) => setConsent(checked as boolean)}
+              />
+              <label 
+                htmlFor="consent" 
+                className="text-sm text-muted-foreground leading-relaxed cursor-pointer"
+              >
+                I consent to the collection and secure storage of the information entered in this form for the purpose of scientific research. I understand that this information will be used only for clinical assessment and will not be shared with third parties without the guardian&apos;s explicit permission, except where required by law.
+              </label>
+            </div>
+
+            <Separator />
+
             {/* Action Buttons */}
-            <div className="flex gap-4 justify-end flex-wrap">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setPatientName("");
-                  setGender("");
-                  setAge("");
-                  setDate(new Date().toISOString().split('T')[0]);
-                  setGuardianName("");
-                  setGuardianPhone("");
-                  setClinicianName("");
-                  setHospital("");
-                  setLocation("");
-                  setCryingScore("0");
-                  setRegurgitationScore("0");
-                  setStoolScore("0");
-                  setSkinScore("0");
-                  setRespiratoryScore("0");
-                  setSaved(false);
-                  setAssessmentId(null);
-                  toast.info("Form cleared");
-                }}
-              >
-                Clear Form
-              </Button>
-              <Button onClick={handleSave} className="bg-primary hover:bg-primary/90" disabled={saved}>
-                {saved ? "Saved ✓" : "Save Assessment"}
-              </Button>
-              <Button 
-                onClick={handleExport}
-                disabled={!saved}
-                className="bg-secondary hover:bg-secondary/90"
-              >
-                Export PDF
-              </Button>
+            <div className="flex gap-4 justify-between flex-wrap items-center">
+              <div className="text-sm font-medium">
+                Total: {totalScore}
+              </div>
+              <div className="flex gap-4">
+                <Button onClick={handleSave} disabled={saved}>
+                  {saved ? "Saved ✓" : "Save Assessment"}
+                </Button>
+                <Button 
+                  onClick={handleExport}
+                  disabled={!saved}
+                  variant="outline"
+                >
+                  Export PDF
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setPatientName("");
+                    setGender("");
+                    setAge("");
+                    setDate(new Date().toISOString().split('T')[0]);
+                    setGuardianName("");
+                    setGuardianPhone("");
+                    setClinicianName("");
+                    setHospital("");
+                    setLocation("");
+                    setCryingScore("0");
+                    setRegurgitationScore("0");
+                    setStoolScore("0");
+                    setSkinScore("0");
+                    setRespiratoryScore("0");
+                    setNotes("");
+                    setConsent(false);
+                    setSaved(false);
+                    setAssessmentId(null);
+                    toast.info("Form cleared");
+                  }}
+                >
+                  Reset
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

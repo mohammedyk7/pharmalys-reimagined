@@ -76,26 +76,35 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
 
     try {
       console.log("Starting database insert with userId:", userId);
+      
+      // Test if Supabase is working
+      const { data: testData, error: testError } = await supabase.auth.getUser();
+      console.log("Auth test:", testData, testError);
+      
+      const insertData = {
+        user_id: userId,
+        patient_name: patientName,
+        patient_gender: gender,
+        patient_age_months: parseInt(age),
+        assessment_date: date,
+        guardian_name: guardianName,
+        guardian_phone: guardianPhone,
+        clinician_name: clinicianName,
+        hospital_clinic: hospital,
+        location: location || null,
+        crying_score: parseInt(cryingScore),
+        regurgitation_score: parseInt(regurgitationScore),
+        stool_score: parseInt(stoolScore),
+        skin_score: parseInt(skinScore),
+        respiratory_score: parseInt(respiratoryScore),
+        notes: notes || null,
+      };
+      
+      console.log("Insert data:", insertData);
+      
       const { data, error } = await supabase
         .from('assessments')
-        .insert({
-          user_id: userId,
-          patient_name: patientName,
-          patient_gender: gender,
-          patient_age_months: parseInt(age),
-          assessment_date: date,
-          guardian_name: guardianName,
-          guardian_phone: guardianPhone,
-          clinician_name: clinicianName,
-          hospital_clinic: hospital,
-          location: location || null,
-          crying_score: parseInt(cryingScore),
-          regurgitation_score: parseInt(regurgitationScore),
-          stool_score: parseInt(stoolScore),
-          skin_score: parseInt(skinScore),
-          respiratory_score: parseInt(respiratoryScore),
-          notes: notes || null,
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -103,7 +112,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
 
       if (error) {
         console.error("Supabase error:", error);
-        throw error;
+        toast.error(`Database error: ${error.message}`);
+        return;
       }
 
       console.log("Save successful:", data);

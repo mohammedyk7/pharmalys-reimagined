@@ -59,10 +59,17 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     console.log("Save button clicked");
     console.log("Consent status:", consent);
     
-    // Validation
-    if (!patientName || !gender || !age || !guardianName || !guardianPhone || 
-        !clinicianName || !hospital) {
-      toast.error("Please fill in all required fields");
+    // Validation - only gender and age are required for patient details
+    if (!gender || !age) {
+      toast.error("Please fill in all required fields (Gender and Age)");
+      return;
+    }
+    
+    // Validate that all symptoms have been assessed (not default/empty)
+    // Since they all default to "0", we just need to ensure they exist
+    if (cryingScore === "" || regurgitationScore === "" || stoolScore === "" || 
+        skinScore === "" || respiratoryScore === "") {
+      toast.error("Please assess all symptoms");
       return;
     }
 
@@ -213,10 +220,10 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
             {/* Patient Details */}
             <div>
               <h3 className="text-lg font-semibold mb-4">Patient Details</h3>
-              <p className="text-sm text-muted-foreground mb-4">Required fields marked *</p>
+              <p className="text-sm text-muted-foreground mb-4">Required fields marked with *</p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Name *</Label>
+                  <Label htmlFor="name">Name</Label>
                   <Input 
                     id="name" 
                     placeholder="Patient name" 
@@ -258,7 +265,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                   <p className="text-xs text-muted-foreground mt-1">Defaults to today.</p>
                 </div>
                 <div>
-                  <Label htmlFor="guardian">Guardian name *</Label>
+                  <Label htmlFor="guardian">Guardian name</Label>
                   <Input 
                     id="guardian" 
                     placeholder="Guardian name" 
@@ -267,7 +274,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Guardian phone *</Label>
+                  <Label htmlFor="phone">Guardian phone</Label>
                   <Input 
                     id="phone" 
                     type="tel" 
@@ -284,10 +291,10 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
             {/* Clinician Details */}
             <div>
               <h3 className="text-lg font-semibold mb-4">Clinician Details</h3>
-              <p className="text-sm text-muted-foreground mb-4">Required fields marked *</p>
+              <p className="text-sm text-muted-foreground mb-4">Optional information</p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="clinician">Clinician's Name *</Label>
+                  <Label htmlFor="clinician">Clinician&apos;s Name</Label>
                   <Input 
                     id="clinician" 
                     placeholder="Full name" 
@@ -297,7 +304,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                   <p className="text-xs text-muted-foreground mt-1">Full name as it will appear on the report.</p>
                 </div>
                 <div>
-                  <Label htmlFor="hospital">Hospital / Clinic *</Label>
+                  <Label htmlFor="hospital">Hospital / Clinic</Label>
                   <Input 
                     id="hospital" 
                     placeholder="Hospital name" 
@@ -321,8 +328,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
             {/* Symptoms */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Symptoms</h3>
-              <p className="text-sm text-muted-foreground mb-4">Assessed by parents without any obvious cause (≥1 week duration, no infectious disease)</p>
+              <h3 className="text-lg font-semibold mb-2">Symptoms *</h3>
+              <p className="text-sm text-muted-foreground mb-4">All symptoms must be assessed - Assessed by parents without any obvious cause (≥1 week duration, no infectious disease)</p>
               
               <div className="space-y-4">
                 <div>

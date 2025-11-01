@@ -3,18 +3,18 @@ import { Badge } from "@/components/ui/badge";
 
 const Hero = () => {
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className="relative py-20 pt-32 overflow-hidden">
       <video 
         autoPlay 
         loop 
         muted 
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="fixed top-0 left-0 w-full h-screen object-cover -z-10"
       >
         <source src="/videos/hero-video.mp4" type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-black/40" />
-      <div className="container mx-auto px-4 text-center max-w-4xl relative z-10">
+      <div className="fixed top-0 left-0 w-full h-screen bg-black/40 -z-10" />
+      <div className="container mx-auto px-4 text-center max-w-4xl relative">
         <Badge variant="secondary" className="mb-6">
           New • CoMiSS PDF v2
         </Badge>

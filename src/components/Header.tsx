@@ -2,16 +2,19 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Home } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   user: any;
   onSignOut: () => void;
+  showHomeButton?: boolean;
 }
 
-const Header = ({ user, onSignOut }: HeaderProps) => {
+const Header = ({ user, onSignOut, showHomeButton = false }: HeaderProps) => {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");
@@ -49,6 +52,12 @@ const Header = ({ user, onSignOut }: HeaderProps) => {
           </a>
           {user && (
             <>
+              {showHomeButton && (
+                <Button variant="outline" size="sm" onClick={() => navigate("/")}>
+                  <Home className="h-4 w-4 mr-2" />
+                  Home
+                </Button>
+              )}
               <span className="text-sm text-muted-foreground">
                 {user.email}
               </span>

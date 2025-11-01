@@ -109,7 +109,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header user={user} onSignOut={handleSignOut} />
+      <Header user={user} onSignOut={handleSignOut} showHomeButton={true} />
       <main>
         <AdminDashboard />
       </main>

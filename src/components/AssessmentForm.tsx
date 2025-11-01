@@ -75,6 +75,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
     console.log("Validation passed, attempting to save...");
 
     try {
+      console.log("Starting database insert with userId:", userId);
       const { data, error } = await supabase
         .from('assessments')
         .insert({
@@ -97,6 +98,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
         })
         .select()
         .single();
+
+      console.log("Database response - data:", data, "error:", error);
 
       if (error) {
         console.error("Supabase error:", error);

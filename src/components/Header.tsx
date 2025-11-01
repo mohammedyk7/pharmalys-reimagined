@@ -35,27 +35,27 @@ const Header = ({ user, onSignOut }: HeaderProps) => {
   };
 
   return (
-    <header className="border-b border-white/10 bg-black/30 backdrop-blur-sm absolute top-0 left-0 right-0 z-50">
+    <header className="border-b border-border bg-card">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={logo} alt="Pharmalys Laboratories" className="h-20" />
         </div>
         <nav className="flex items-center gap-6">
-          <a href="#features" className="text-sm text-white/80 hover:text-white transition-colors">
+          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Features
           </a>
-          <a href="#app" className="text-sm text-white/80 hover:text-white transition-colors">
+          <a href="#app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             App
           </a>
           {user && (
             <>
-              <span className="text-sm text-white/80">
+              <span className="text-sm text-muted-foreground">
                 {user.email}
               </span>
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="border-white/20 text-white hover:bg-white/10">
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
                 Sign out
               </Button>
-              <Button variant="outline" size="sm" onClick={toggleTheme} className="border-white/20 text-white hover:bg-white/10">
+              <Button variant="outline" size="sm" onClick={toggleTheme}>
                 {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
               </Button>
             </>

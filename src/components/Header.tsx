@@ -26,11 +26,17 @@ const Header = ({ user, onSignOut }: HeaderProps) => {
           <img src={logo} alt="Pharmalys Laboratories" className="h-16" />
         </div>
         <nav className="flex items-center gap-6">
-          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
-            Features
+          <a href="#company" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
+            Company
           </a>
-          <a href="#app" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
-            App
+          <a href="#quality" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
+            Quality
+          </a>
+          <a href="#sustainability" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
+            Sustainability
+          </a>
+          <a href="#brands" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
+            Brands
           </a>
           {user && (
             <>

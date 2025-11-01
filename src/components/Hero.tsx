@@ -28,7 +28,7 @@ const Hero = () => {
           <Button size="lg" className="bg-primary hover:bg-primary/90">
             <a href="#app">Start Assessing</a>
           </Button>
-          <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">View PDF Sample</Button>
+          <Button size="lg" variant="secondary">View PDF Sample</Button>
         </div>
       </div>
     </section>

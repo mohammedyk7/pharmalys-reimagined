@@ -23,21 +23,9 @@ const Header = ({ user, onSignOut }: HeaderProps) => {
     <header className="border-b border-border bg-card">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Pharmalys Laboratories" className="h-16" />
+          <img src={logo} alt="Pharmalys Laboratories" className="h-20" />
         </div>
         <nav className="flex items-center gap-6">
-          <a href="#company" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
-            Company
-          </a>
-          <a href="#quality" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
-            Quality
-          </a>
-          <a href="#sustainability" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
-            Sustainability
-          </a>
-          <a href="#brands" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden md:block">
-            Brands
-          </a>
           {user && (
             <>
               <span className="text-sm text-muted-foreground hidden md:block">

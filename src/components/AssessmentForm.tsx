@@ -14,10 +14,10 @@ import jsPDF from "jspdf";
 import logo from "@/assets/logo.png";
 
 interface AssessmentFormProps {
-  userId: string;
+  userId?: string;
 }
 
-const AssessmentForm = ({ userId }: AssessmentFormProps) => {
+const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   const [saved, setSaved] = useState(false);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   
@@ -82,7 +82,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
       console.log("Auth test:", testData, testError);
       
       const insertData = {
-        user_id: userId,
+        user_id: userId || null,
         patient_name: patientName,
         patient_gender: gender,
         patient_age_months: parseInt(age),

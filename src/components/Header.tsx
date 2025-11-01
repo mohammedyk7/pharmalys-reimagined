@@ -35,7 +35,7 @@ const Header = ({ user, onSignOut }: HeaderProps) => {
   };
 
   return (
-    <header className="border-b border-border bg-card">
+    <header className="border-b border-border bg-card relative">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={logo} alt="Pharmalys Laboratories" className="h-20" />
@@ -61,6 +61,10 @@ const Header = ({ user, onSignOut }: HeaderProps) => {
             </>
           )}
         </nav>
+      </div>
+      {/* Animated green line */}
+      <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-green-500 via-green-400 to-green-500 w-full">
+        <div className="h-full w-1/3 bg-gradient-to-r from-transparent via-white to-transparent opacity-50 animate-[slide-in-right_2s_ease-in-out_infinite]" />
       </div>
     </header>
   );

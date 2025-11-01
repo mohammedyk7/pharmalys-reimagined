@@ -56,6 +56,9 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
   const analysis = getAnalysis();
 
   const handleSave = async () => {
+    console.log("Save button clicked");
+    console.log("Consent status:", consent);
+    
     // Validation
     if (!patientName || !gender || !age || !guardianName || !guardianPhone || 
         !clinicianName || !hospital) {
@@ -64,9 +67,12 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
     }
 
     if (!consent) {
+      console.log("Consent validation failed");
       toast.error("Please accept the consent form");
       return;
     }
+
+    console.log("Validation passed, attempting to save...");
 
     try {
       const { data, error } = await supabase
@@ -92,8 +98,12 @@ const AssessmentForm = ({ userId }: AssessmentFormProps) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
 
+      console.log("Save successful:", data);
       setAssessmentId(data.id);
       setSaved(true);
       toast.success("Assessment saved successfully");

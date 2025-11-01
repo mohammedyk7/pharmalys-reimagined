@@ -16,20 +16,23 @@ const Index = () => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          // Check if user is admin
-          const { data: roleData } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", session.user.id)
-            .eq("role", "admin")
-            .single();
-          
-          setIsAdmin(!!roleData);
+          // Defer Supabase call with setTimeout to prevent deadlock
+          setTimeout(() => {
+            supabase
+              .from("user_roles")
+              .select("role")
+              .eq("user_id", session.user.id)
+              .eq("role", "admin")
+              .maybeSingle()
+              .then(({ data: roleData }) => {
+                setIsAdmin(!!roleData);
+              });
+          }, 0);
         } else {
           setIsAdmin(false);
         }
@@ -37,19 +40,20 @@ const Index = () => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        const { data: roleData } = await supabase
+        supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", session.user.id)
           .eq("role", "admin")
-          .single();
-        
-        setIsAdmin(!!roleData);
+          .maybeSingle()
+          .then(({ data: roleData }) => {
+            setIsAdmin(!!roleData);
+          });
       }
     });
 

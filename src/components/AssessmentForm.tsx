@@ -75,12 +75,6 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     console.log("Validation passed, attempting to save...");
 
     try {
-      console.log("Starting database insert with userId:", userId);
-      
-      // Test if Supabase is working
-      const { data: testData, error: testError } = await supabase.auth.getUser();
-      console.log("Auth test:", testData, testError);
-      
       const insertData = {
         user_id: userId || null,
         patient_name: patientName,

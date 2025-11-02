@@ -32,7 +32,8 @@ const ContactUs = () => {
 
       setIsSubmitting(true);
 
-      const { error } = await supabase
+      // Save to database
+      const { error: dbError } = await supabase
         .from("contact_submissions")
         .insert([{
           name: validatedData.name,
@@ -40,7 +41,21 @@ const ContactUs = () => {
           message: validatedData.message
         }]);
 
-      if (error) throw error;
+      if (dbError) throw dbError;
+
+      // Send email notification
+      const { error: emailError } = await supabase.functions.invoke('send-contact-notification', {
+        body: {
+          name: validatedData.name,
+          email: validatedData.email,
+          message: validatedData.message
+        }
+      });
+
+      if (emailError) {
+        console.error("Email notification error:", emailError);
+        // Don't fail the submission if email fails
+      }
 
       toast({
         title: "Thank you for your feedback!",

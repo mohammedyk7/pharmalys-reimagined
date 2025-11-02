@@ -1,29 +1,34 @@
-import { CheckCircle2, Shield, Lock } from "lucide-react";
+import { Award, Shield, Workflow, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Features = () => {
   const features = [
     {
-      icon: CheckCircle2,
-      title: "Clinical Reliability",
-      description: "Validated scoring aligned with pediatric guidelines to support consistent diagnosis and monitoring in clinical practice."
+      icon: Award,
+      title: "Evidence-Based Scoring",
+      description: "Aligned with validated pediatric criteria and the latest CoMiSS® update from ESPGHAN (2022), ensuring every assessment reflects current best practices and clinical relevance."
     },
     {
       icon: Shield,
-      title: "Brand Integrity",
-      description: "Pharmalys branding and copyright automatically included, ensuring trust and authenticity in every report."
+      title: "Secure & Compliant",
+      description: "Data is saved before export, minimizing errors and supporting compliance with privacy and clinical documentation standards."
     },
     {
-      icon: Lock,
-      title: "Safe → Controlled Workflow",
-      description: "Reports can only be exported after saving, reducing errors and protecting clinical data integrity."
+      icon: Workflow,
+      title: "Seamless Integration",
+      description: "Designed for real-world use: from outpatient clinics to research settings, with export-ready reports that fit into existing workflows."
+    },
+    {
+      icon: Heart,
+      title: "Patient-Centered Clarity",
+      description: "Designed to support caregiver understanding and pediatric decision-making, bridging clinical insight with everyday relevance."
     }
   ];
 
   return (
     <section id="features" className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
             <Card key={index} className="border-border bg-card hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">

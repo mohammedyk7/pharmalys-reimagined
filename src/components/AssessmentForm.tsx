@@ -12,6 +12,26 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import logo from "@/assets/logo.png";
+import { z } from "zod";
+
+// Comprehensive validation schema for assessment form
+const assessmentSchema = z.object({
+  patient_name: z.string().trim().min(1, "Patient name is required").max(100, "Patient name must be less than 100 characters"),
+  patient_gender: z.enum(['Male', 'Female'], { errorMap: () => ({ message: "Gender must be Male or Female" }) }),
+  patient_age_months: z.number().int("Age must be a whole number").min(0, "Age cannot be negative").max(240, "Age must be less than 240 months (20 years)"),
+  guardian_name: z.string().trim().min(1, "Guardian name is required").max(100, "Guardian name must be less than 100 characters"),
+  guardian_phone: z.string().trim().regex(/^[\+]?[0-9\s\-\(\)]{7,20}$/, "Phone number must be valid (7-20 characters, numbers, spaces, dashes, parentheses allowed)"),
+  clinician_name: z.string().trim().min(1, "Clinician name is required").max(100, "Clinician name must be less than 100 characters"),
+  hospital_clinic: z.string().trim().min(1, "Hospital/clinic is required").max(200, "Hospital/clinic name must be less than 200 characters"),
+  country: z.string().trim().max(100, "Country must be less than 100 characters").nullable(),
+  city: z.string().trim().max(100, "City must be less than 100 characters").nullable(),
+  crying_score: z.number().int("Score must be a whole number").min(0, "Score cannot be negative").max(6, "Crying score maximum is 6"),
+  regurgitation_score: z.number().int("Score must be a whole number").min(0, "Score cannot be negative").max(6, "Regurgitation score maximum is 6"),
+  stool_score: z.number().int("Score must be a whole number").min(0, "Score cannot be negative").max(6, "Stool score maximum is 6"),
+  skin_score: z.number().int("Score must be a whole number").min(0, "Score cannot be negative").max(12, "Skin score maximum is 12"),
+  respiratory_score: z.number().int("Score must be a whole number").min(0, "Score cannot be negative").max(3, "Respiratory score maximum is 3"),
+  notes: z.string().trim().max(2000, "Notes must be less than 2000 characters").nullable(),
+});
 
 interface AssessmentFormProps {
   userId?: string;
@@ -88,53 +108,55 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   ];
 
   const handleSave = async () => {
-    console.log("Save button clicked");
-    console.log("Consent status:", consent);
-    
-    // Validation - only gender and age are required for patient details
-    if (!gender || !age) {
-      toast.error("Please fill in all required fields (Gender and Age)");
-      return;
-    }
-    
-    // Validate that all symptoms have been assessed (not default/empty)
-    // Since they all default to "0", we just need to ensure they exist
-    if (cryingScore === "" || regurgitationScore === "" || stoolScore === "" || 
-        skinHeadScore === "" || skinArmsScore === "" || respiratoryScore === "") {
-      toast.error("Please assess all symptoms");
-      return;
-    }
-
+    // Basic consent validation
     if (!consent) {
-      console.log("Consent validation failed");
       toast.error("Please accept the consent form");
       return;
     }
 
-    console.log("Validation passed, attempting to save...");
-
     try {
-      const insertData = {
-        user_id: userId || null,
+      // Prepare data for validation
+      const formData = {
         patient_name: patientName,
         patient_gender: gender,
-        patient_age_months: parseInt(age),
-        assessment_date: date,
+        patient_age_months: parseInt(age) || 0,
         guardian_name: guardianName,
         guardian_phone: guardianPhone,
         clinician_name: clinicianName,
         hospital_clinic: hospital,
         country: country || null,
         city: city || null,
-        crying_score: parseInt(cryingScore),
-        regurgitation_score: parseInt(regurgitationScore),
-        stool_score: parseInt(stoolScore),
-        skin_score: parseInt(skinHeadScore) + parseInt(skinArmsScore),
-        respiratory_score: parseInt(respiratoryScore),
+        crying_score: parseInt(cryingScore) || 0,
+        regurgitation_score: parseInt(regurgitationScore) || 0,
+        stool_score: parseInt(stoolScore) || 0,
+        skin_score: (parseInt(skinHeadScore) || 0) + (parseInt(skinArmsScore) || 0),
+        respiratory_score: parseInt(respiratoryScore) || 0,
         notes: notes || null,
       };
-      
-      console.log("Insert data:", insertData);
+
+      // Validate using Zod schema
+      const validatedData = assessmentSchema.parse(formData);
+
+      // Prepare insert data with all required fields
+      const insertData = {
+        user_id: userId || null,
+        assessment_date: date,
+        patient_name: validatedData.patient_name,
+        patient_gender: validatedData.patient_gender,
+        patient_age_months: validatedData.patient_age_months,
+        guardian_name: validatedData.guardian_name,
+        guardian_phone: validatedData.guardian_phone,
+        clinician_name: validatedData.clinician_name,
+        hospital_clinic: validatedData.hospital_clinic,
+        country: validatedData.country,
+        city: validatedData.city,
+        crying_score: validatedData.crying_score,
+        regurgitation_score: validatedData.regurgitation_score,
+        stool_score: validatedData.stool_score,
+        skin_score: validatedData.skin_score,
+        respiratory_score: validatedData.respiratory_score,
+        notes: validatedData.notes,
+      };
       
       const { data, error } = await supabase
         .from('assessments')
@@ -142,21 +164,24 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
         .select()
         .single();
 
-      console.log("Database response - data:", data, "error:", error);
-
       if (error) {
         console.error("Supabase error:", error);
         toast.error(`Database error: ${error.message}`);
         return;
       }
 
-      console.log("Save successful:", data);
       setAssessmentId(data.id);
       setSaved(true);
       toast.success("Assessment saved successfully");
     } catch (error: any) {
-      console.error("Error saving assessment:", error);
-      toast.error(error.message || "Failed to save assessment");
+      if (error instanceof z.ZodError) {
+        // Display first validation error to user
+        const firstError = error.errors[0];
+        toast.error(firstError.message);
+      } else {
+        console.error("Error saving assessment:", error);
+        toast.error(error.message || "Failed to save assessment");
+      }
     }
   };
 

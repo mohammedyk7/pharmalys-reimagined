@@ -23,7 +23,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { name, email, message }: ContactNotificationRequest = await req.json();
 
-    console.log("Sending contact notification email for:", email);
+    console.log("Sending contact notification email to hajar.khalid@pharmalys.ch from:", email);
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",

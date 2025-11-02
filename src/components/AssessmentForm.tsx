@@ -35,13 +35,14 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   const [cryingScore, setCryingScore] = useState("0");
   const [regurgitationScore, setRegurgitationScore] = useState("0");
   const [stoolScore, setStoolScore] = useState("0");
-  const [skinScore, setSkinScore] = useState("0");
+  const [skinHeadScore, setSkinHeadScore] = useState("0");
+  const [skinArmsScore, setSkinArmsScore] = useState("0");
   const [respiratoryScore, setRespiratoryScore] = useState("0");
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
 
   const totalScore = parseInt(cryingScore) + parseInt(regurgitationScore) + 
-                     parseInt(stoolScore) + parseInt(skinScore) + parseInt(respiratoryScore);
+                     parseInt(stoolScore) + parseInt(skinHeadScore) + parseInt(skinArmsScore) + parseInt(respiratoryScore);
   const maxScore = 33;
 
   const getAnalysis = () => {
@@ -99,7 +100,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     // Validate that all symptoms have been assessed (not default/empty)
     // Since they all default to "0", we just need to ensure they exist
     if (cryingScore === "" || regurgitationScore === "" || stoolScore === "" || 
-        skinScore === "" || respiratoryScore === "") {
+        skinHeadScore === "" || skinArmsScore === "" || respiratoryScore === "") {
       toast.error("Please assess all symptoms");
       return;
     }
@@ -128,7 +129,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
         crying_score: parseInt(cryingScore),
         regurgitation_score: parseInt(regurgitationScore),
         stool_score: parseInt(stoolScore),
-        skin_score: parseInt(skinScore),
+        skin_score: parseInt(skinHeadScore) + parseInt(skinArmsScore),
         respiratory_score: parseInt(respiratoryScore),
         notes: notes || null,
       };
@@ -166,7 +167,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     }
 
     const totalScore = parseInt(cryingScore) + parseInt(regurgitationScore) + 
-                      parseInt(stoolScore) + parseInt(skinScore) + parseInt(respiratoryScore);
+                      parseInt(stoolScore) + parseInt(skinHeadScore) + parseInt(skinArmsScore) + parseInt(respiratoryScore);
 
     const doc = new jsPDF();
     
@@ -225,8 +226,10 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     doc.text(`Regurgitation: ${regurgitationScore}`, 70, y);
     doc.text(`Stool: ${stoolScore}`, 125, y);
     y += 6;
-    doc.text(`Skin: ${skinScore}`, 15, y);
-    doc.text(`Respiratory: ${respiratoryScore}`, 70, y);
+    doc.text(`Skin (Head/Neck/Trunk): ${skinHeadScore}`, 15, y);
+    doc.text(`Skin (Arms/Hands/Legs/Feet): ${skinArmsScore}`, 70, y);
+    y += 6;
+    doc.text(`Respiratory: ${respiratoryScore}`, 15, y);
     
     // Total Score
     y += 12;
@@ -399,85 +402,106 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="crying">Crying</Label>
-                  <p className="text-xs text-muted-foreground mb-2">Assessed by parents • ≥ 1 week duration</p>
+                  <p className="text-xs text-muted-foreground mb-2">Assessed by parents ≥ 1 week duration.</p>
                   <Select value={cryingScore} onValueChange={setCryingScore}>
                     <SelectTrigger>
-                      <SelectValue placeholder="≤ 1 h/day (0)" />
+                      <SelectValue placeholder="Select crying duration" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">≤ 1 h/day (0)</SelectItem>
-                      <SelectItem value="1">1–1.5 h/day (1)</SelectItem>
-                      <SelectItem value="2">1.5–2 h/day (2)</SelectItem>
-                      <SelectItem value="3">2–3 h/day (3)</SelectItem>
-                      <SelectItem value="4">3–4 h/day (4)</SelectItem>
-                      <SelectItem value="5">4–5 h/day (5)</SelectItem>
-                      <SelectItem value="6">≥ 5 h/day (6)</SelectItem>
+                      <SelectItem value="0">≤ 1 hour per day (0)</SelectItem>
+                      <SelectItem value="1">1 to 1.5 hours per day (1)</SelectItem>
+                      <SelectItem value="2">1.5 to 2 hours per day (2)</SelectItem>
+                      <SelectItem value="3">2 to 3 hours per day (3)</SelectItem>
+                      <SelectItem value="4">3 to 4 hours per day (4)</SelectItem>
+                      <SelectItem value="5">4 to 5 hours per day (5)</SelectItem>
+                      <SelectItem value="6">≥ 5 hours per day (6)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
                   <Label htmlFor="regurgitation">Regurgitation</Label>
-                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration</p>
+                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
                   <Select value={regurgitationScore} onValueChange={setRegurgitationScore}>
                     <SelectTrigger>
-                      <SelectValue placeholder="None/rare (0)" />
+                      <SelectValue placeholder="Select regurgitation level" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">None/rare (0)</SelectItem>
-                      <SelectItem value="1">Mild (1)</SelectItem>
-                      <SelectItem value="2">Occasional (2)</SelectItem>
-                      <SelectItem value="3">Frequent (3)</SelectItem>
-                      <SelectItem value="4">Marked (4)</SelectItem>
+                      <SelectItem value="0">0–2 episodes per day (0)</SelectItem>
+                      <SelectItem value="1">3 to 5 episodes per day (1)</SelectItem>
+                      <SelectItem value="2">&gt; 5 episodes of &lt; 5 mL (2)</SelectItem>
+                      <SelectItem value="3">&gt; 5 episodes of ½ feed in &lt; ½ feeds (3)</SelectItem>
+                      <SelectItem value="4">Continuous regurgitation of small volumes &gt; 30 min after each feed (4)</SelectItem>
+                      <SelectItem value="5">Regurgitation of half to complete volume of feed in latter half of feeds (5)</SelectItem>
+                      <SelectItem value="6">Regurgitation of complete feed after each feeding (6)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
                   <Label htmlFor="stool">Stools</Label>
-                  <p className="text-xs text-muted-foreground mb-2">Brussels Infant and Toddlers Stool Scale (BITSS)</p>
+                  <p className="text-xs text-muted-foreground mb-2">Brussels Infant and Toddlers Stool Scale (BITSS).</p>
                   <Select value={stoolScore} onValueChange={setStoolScore}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Normal (0)" />
+                      <SelectValue placeholder="Select stool type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">Normal (0)</SelectItem>
-                      <SelectItem value="1">Soft (1)</SelectItem>
-                      <SelectItem value="2">Loose (2)</SelectItem>
-                      <SelectItem value="3">Watery (3)</SelectItem>
-                      <SelectItem value="4">Bloody (4)</SelectItem>
+                      <SelectItem value="0">Formed stools (0)</SelectItem>
+                      <SelectItem value="4">Hard or loose stools (4)</SelectItem>
+                      <SelectItem value="6">Watery or bloody stools (6)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <Label htmlFor="skin">Skin (Atopic Eczema)</Label>
-                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration</p>
-                  <Select value={skinScore} onValueChange={setSkinScore}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="None (0)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="0">None (0)</SelectItem>
-                      <SelectItem value="1">Mild (1)</SelectItem>
-                      <SelectItem value="2">Moderate (2)</SelectItem>
-                      <SelectItem value="3">Severe (3)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label>Skin (Atopic Eczema)</Label>
+                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="skin-head" className="text-sm font-normal">Head/Neck/Trunk</Label>
+                      <Select value={skinHeadScore} onValueChange={setSkinHeadScore}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select severity" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Absent (0)</SelectItem>
+                          <SelectItem value="2">Mild (2)</SelectItem>
+                          <SelectItem value="4">Moderate (4)</SelectItem>
+                          <SelectItem value="6">Severe (6)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="skin-arms" className="text-sm font-normal">Arms/Hands/Legs/Feet</Label>
+                      <Select value={skinArmsScore} onValueChange={setSkinArmsScore}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select severity" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Absent (0)</SelectItem>
+                          <SelectItem value="2">Mild (2)</SelectItem>
+                          <SelectItem value="4">Moderate (4)</SelectItem>
+                          <SelectItem value="6">Severe (6)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
                   <Label htmlFor="respiratory">Respiratory Symptoms</Label>
-                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration</p>
+                  <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
                   <Select value={respiratoryScore} onValueChange={setRespiratoryScore}>
                     <SelectTrigger>
-                      <SelectValue placeholder="None (0)" />
+                      <SelectValue placeholder="Select respiratory symptoms" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">None (0)</SelectItem>
-                      <SelectItem value="1">Mild (1)</SelectItem>
-                      <SelectItem value="2">Moderate (2)</SelectItem>
-                      <SelectItem value="3">Severe (3)</SelectItem>
+                      <SelectItem value="0">No respiratory symptoms (0)</SelectItem>
+                      <SelectItem value="1">Slight symptoms (1)</SelectItem>
+                      <SelectItem value="2">Mild symptoms (2)</SelectItem>
+                      <SelectItem value="3">Severe symptoms (3)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -560,7 +584,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                     setCryingScore("0");
                     setRegurgitationScore("0");
                     setStoolScore("0");
-                    setSkinScore("0");
+                    setSkinHeadScore("0");
+                    setSkinArmsScore("0");
                     setRespiratoryScore("0");
                     setNotes("");
                     setConsent(false);

@@ -47,9 +47,9 @@ const Header = ({ user, onSignOut, showHomeButton = false }: HeaderProps) => {
           <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Features
           </a>
-          <a href="#app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            App
-          </a>
+          <Button variant="outline" size="sm" onClick={() => window.location.href = "#about"}>
+            About
+          </Button>
           {user && (
             <>
               {showHomeButton && (

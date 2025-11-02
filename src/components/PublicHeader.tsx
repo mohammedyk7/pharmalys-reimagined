@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { Moon, Sun, Home } from "lucide-react";
+import { Moon, Sun, Home, Mail, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -34,9 +34,11 @@ const PublicHeader = () => {
             Home
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.location.href = "#app"}>
+            <Info className="h-4 w-4 mr-2" />
             About
           </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/contact")}>
+            <Mail className="h-4 w-4 mr-2" />
             Contact Us
           </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>

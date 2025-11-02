@@ -17,7 +17,9 @@ export type Database = {
       assessments: {
         Row: {
           assessment_date: string
+          city: string | null
           clinician_name: string
+          country: string | null
           created_at: string
           crying_score: number
           guardian_name: string
@@ -39,7 +41,9 @@ export type Database = {
         }
         Insert: {
           assessment_date: string
+          city?: string | null
           clinician_name: string
+          country?: string | null
           created_at?: string
           crying_score: number
           guardian_name: string
@@ -61,7 +65,9 @@ export type Database = {
         }
         Update: {
           assessment_date?: string
+          city?: string | null
           clinician_name?: string
+          country?: string | null
           created_at?: string
           crying_score?: number
           guardian_name?: string
@@ -80,6 +86,30 @@ export type Database = {
           total_score?: number | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
         }
         Relationships: []
       }

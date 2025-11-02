@@ -24,6 +24,9 @@ const PublicHeader = () => {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={logo} alt="Pharmalys Laboratories" className="h-20" />
+          <span className="px-2 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-md border border-primary/20">
+            DEMO
+          </span>
         </div>
         <nav className="flex items-center gap-6">
           <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -32,6 +35,9 @@ const PublicHeader = () => {
           <a href="#app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             App
           </a>
+          <Button variant="outline" size="sm" onClick={() => navigate("/contact")}>
+            Contact Us
+          </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
             Admin Login
           </Button>

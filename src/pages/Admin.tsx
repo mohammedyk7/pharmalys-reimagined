@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import AdminDashboard from "@/components/AdminDashboard";
+import Footer from "@/components/Footer";
 import Auth from "@/components/Auth";
 
 const Admin = () => {
@@ -103,6 +104,7 @@ const Admin = () => {
             </a>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
@@ -113,6 +115,7 @@ const Admin = () => {
       <main>
         <AdminDashboard />
       </main>
+      <Footer />
     </div>
   );
 };

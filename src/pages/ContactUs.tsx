@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import PublicHeader from "@/components/PublicHeader";
+import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -134,6 +135,7 @@ const ContactUs = () => {
           </Card>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

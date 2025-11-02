@@ -32,7 +32,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "CoMiSS Tool <hajkhaj@outlook.com>",
+        from: "CoMiSS Tool <onboarding@resend.dev>",
         to: ["hajkhaj@outlook.com"],
         reply_to: email,
         subject: `New Contact Form Submission from ${name}`,

@@ -1,5 +1,6 @@
-import { Award, Shield, Workflow, Heart } from "lucide-react";
+import { Award, Shield, Workflow, Heart, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const Features = () => {
   const features = [
@@ -26,7 +27,7 @@ const Features = () => {
   ];
 
   return (
-    <section id="features" className="py-16 bg-muted/30">
+    <section id="reference" className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
@@ -38,6 +39,18 @@ const Features = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+        
+        <div className="mt-8 flex justify-center">
+          <Button
+            variant="outline"
+            size="lg"
+            className="gap-2"
+            onClick={() => window.open('https://doi.org/10.3390/nu14132683', '_blank')}
+          >
+            <ExternalLink className="w-4 h-4" />
+            Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683
+          </Button>
         </div>
       </div>
     </section>

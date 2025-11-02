@@ -33,7 +33,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "CoMiSS Tool <onboarding@resend.dev>",
-        to: ["mohammedyk7@gmail.com"],
+        to: ["hajar.khalid@pharmalys.ch"],
         reply_to: email,
         subject: `New Contact Form Submission from ${name}`,
         html: `

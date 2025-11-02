@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Home } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const PublicHeader = () => {
     <header className="border-b border-border bg-card relative">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Pharmalys Laboratories" className="h-20" />
+          <img src={logo} alt="Pharmalys Laboratories" className="h-24" />
           <span className="px-2 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-md border border-primary/20">
             DEMO
           </span>
@@ -35,6 +35,10 @@ const PublicHeader = () => {
           <a href="#app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             App
           </a>
+          <Button variant="outline" size="sm" onClick={() => navigate("/")}>
+            <Home className="h-4 w-4 mr-2" />
+            Home
+          </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/contact")}>
             Contact Us
           </Button>

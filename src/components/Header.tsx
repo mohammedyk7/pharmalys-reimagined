@@ -41,7 +41,7 @@ const Header = ({ user, onSignOut, showHomeButton = false }: HeaderProps) => {
     <header className="border-b border-border bg-card relative">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Pharmalys Laboratories" className="h-20" />
+          <img src={logo} alt="Pharmalys Laboratories" className="h-24" />
         </div>
         <nav className="flex items-center gap-6">
           <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

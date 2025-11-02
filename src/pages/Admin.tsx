@@ -91,7 +91,7 @@ const Admin = () => {
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-background">
-        <Header user={user} onSignOut={handleSignOut} />
+        <Header user={user} onSignOut={handleSignOut} showHomeButton={true} />
         <main className="container mx-auto px-4 py-16">
           <div className="max-w-md mx-auto text-center">
             <h1 className="text-2xl font-bold mb-4">Access Denied</h1>

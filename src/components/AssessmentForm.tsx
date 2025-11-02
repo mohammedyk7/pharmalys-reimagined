@@ -115,6 +115,14 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     }
 
     try {
+      // Get current authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("You must be logged in to save an assessment");
+        return;
+      }
+
       // Prepare data for validation
       const formData = {
         patient_name: patientName,
@@ -139,7 +147,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
       // Prepare insert data with all required fields
       const insertData = {
-        user_id: userId || null,
+        user_id: user.id,
         assessment_date: date,
         patient_name: validatedData.patient_name,
         patient_gender: validatedData.patient_gender,

@@ -29,15 +29,12 @@ const PublicHeader = () => {
           </span>
         </div>
         <nav className="flex items-center gap-6">
-          <Button variant="outline" size="sm" onClick={() => window.location.href = "#reference"}>
-            Reference
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => window.location.href = "#app"}>
-            About
-          </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/")}>
             <Home className="h-4 w-4 mr-2" />
             Home
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => window.location.href = "#app"}>
+            About
           </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/contact")}>
             Contact Us

@@ -29,10 +29,10 @@ const PublicHeader = () => {
           </span>
         </div>
         <nav className="flex items-center gap-6">
-          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#reference" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Features
           </a>
-          <Button variant="outline" size="sm" onClick={() => window.location.href = "#about"}>
+          <Button variant="outline" size="sm" onClick={() => window.location.href = "#app"}>
             About
           </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/")}>

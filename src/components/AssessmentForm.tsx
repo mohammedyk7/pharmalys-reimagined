@@ -39,6 +39,7 @@ interface AssessmentFormProps {
 
 const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   
   // Form state
@@ -114,6 +115,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       return;
     }
 
+    setSaving(true);
+
     try {
       // Get current authenticated user (optional)
       const { data: { user } } = await supabase.auth.getUser();
@@ -170,6 +173,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       if (error) {
         console.error("Supabase error:", error);
         toast.error(`Database error: ${error.message}`);
+        setSaving(false);
         return;
       }
 
@@ -185,6 +189,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
         console.error("Error saving assessment:", error);
         toast.error(error.message || "Failed to save assessment");
       }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -586,8 +592,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                 Total: {totalScore}
               </div>
               <div className="flex gap-4">
-                <Button onClick={handleSave} disabled={saved}>
-                  {saved ? "Saved ✓" : "Save Assessment"}
+                <Button onClick={handleSave} disabled={saved || saving}>
+                  {saving ? "Saving..." : saved ? "Saved ✓" : "Save Assessment"}
                 </Button>
                 <Button 
                   onClick={handleExport}

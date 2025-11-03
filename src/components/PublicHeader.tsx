@@ -1,22 +1,61 @@
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
-import { Moon, Sun, Home, Mail, Info } from "lucide-react";
+import { Moon, Sun, Home, Mail, Info, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const PublicHeader = () => {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");
     setTheme(isDark ? "dark" : "light");
+    
+    // Check auth status
+    checkAuthStatus();
+    
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      checkAuthStatus();
+    });
+    
+    return () => subscription.unsubscribe();
   }, []);
+
+  const checkAuthStatus = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setIsLoggedIn(!!user);
+    
+    if (user) {
+      // Check if user is admin
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+      
+      setIsAdmin(!!data);
+    } else {
+      setIsAdmin(false);
+    }
+  };
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     document.documentElement.classList.toggle("dark");
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out successfully");
+    navigate("/");
   };
 
   return (
@@ -41,9 +80,21 @@ const PublicHeader = () => {
             <Mail className="h-4 w-4 mr-2" />
             Contact Us
           </Button>
-          <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
-            Admin Login
-          </Button>
+          {isAdmin && (
+            <span className="px-3 py-1 text-sm font-semibold bg-primary text-primary-foreground rounded-md">
+              Admin
+            </span>
+          )}
+          {isLoggedIn ? (
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+              Admin Login
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={toggleTheme}>
             {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Button>

@@ -80,32 +80,28 @@ const PublicHeader = () => {
             <Mail className="h-4 w-4 mr-2" />
             Contact Us
           </Button>
-          {isAdmin && (
+          
+          {isAdmin ? (
             <>
-              <span className="px-3 py-1 text-sm font-semibold bg-primary text-primary-foreground rounded-md">
-                Admin
-              </span>
-              <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+              <Button variant="default" size="sm" onClick={() => navigate("/admin")}>
                 Dashboard
               </Button>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
             </>
-          )}
-          {isLoggedIn && !isAdmin ? (
+          ) : isLoggedIn ? (
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </Button>
-          ) : !isLoggedIn ? (
+          ) : (
             <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
               Admin Login
             </Button>
-          ) : null}
-          {isAdmin && (
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
           )}
+          
           <Button variant="outline" size="sm" onClick={toggleTheme}>
             {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Button>

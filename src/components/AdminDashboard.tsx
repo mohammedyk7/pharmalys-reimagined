@@ -77,7 +77,7 @@ const AdminDashboard = () => {
       'Stool Score': assessment.stool_score,
       'Skin (Head/Neck/Trunk)': assessment.skin_head_neck_trunk_score,
       'Skin (Arms/Hands/Legs/Feet)': assessment.skin_arms_hands_legs_feet_score,
-      'Urticaria Present': assessment.urticaria_present ? 'Yes' : 'No',
+      'Urticaria': assessment.urticaria_present ? 6 : 0,
       'Respiratory Score': assessment.respiratory_score,
       'Total Score': assessment.total_score,
       'Notes': assessment.notes || '-'
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
                     <TableCell className="text-center">{assessment.stool_score}</TableCell>
                     <TableCell className="text-center">{assessment.skin_head_neck_trunk_score || 0}</TableCell>
                     <TableCell className="text-center">{assessment.skin_arms_hands_legs_feet_score || 0}</TableCell>
-                    <TableCell className="text-center">{assessment.urticaria_present ? 'Yes' : 'No'}</TableCell>
+                    <TableCell className="text-center">{assessment.urticaria_present ? 6 : 0}</TableCell>
                     <TableCell className="text-center">{assessment.respiratory_score}</TableCell>
                     <TableCell className="text-center font-bold">{assessment.total_score}</TableCell>
                     <TableCell className="text-sm max-w-xs truncate">{assessment.notes || '-'}</TableCell>

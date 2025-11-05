@@ -3,7 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Download } from "lucide-react";
+import * as XLSX from 'xlsx';
 
 interface Assessment {
   id: string;
@@ -51,6 +54,38 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const exportToExcel = () => {
+    const exportData = assessments.map(assessment => ({
+      'Date': new Date(assessment.assessment_date).toLocaleDateString(),
+      'Patient Name': assessment.patient_name,
+      'Age (months)': assessment.patient_age_months,
+      'Gender': assessment.patient_gender,
+      'Guardian Name': assessment.guardian_name,
+      'Guardian Phone': assessment.guardian_phone || '-',
+      'Clinician': assessment.clinician_name,
+      'Hospital/Clinic': assessment.hospital_clinic,
+      'Location': assessment.location || '-',
+      'City': assessment.city || '-',
+      'Country': assessment.country || '-',
+      'Crying Score': assessment.crying_score,
+      'Regurgitation Score': assessment.regurgitation_score,
+      'Stool Score': assessment.stool_score,
+      'Skin Score': assessment.skin_score,
+      'Respiratory Score': assessment.respiratory_score,
+      'Total Score': assessment.total_score,
+      'Notes': assessment.notes || '-'
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Assessments');
+    
+    const fileName = `assessments_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+    
+    toast.success('Excel file downloaded successfully');
   };
 
 
@@ -110,8 +145,16 @@ const AdminDashboard = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Assessments</CardTitle>
-          <CardDescription>Complete list of patient assessments</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>All Assessments</CardTitle>
+              <CardDescription>Complete list of patient assessments</CardDescription>
+            </div>
+            <Button onClick={exportToExcel} variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Export to Excel
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>

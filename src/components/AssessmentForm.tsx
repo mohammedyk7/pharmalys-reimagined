@@ -54,13 +54,13 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   const [hospital, setHospital] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
-  const [cryingScore, setCryingScore] = useState("0");
-  const [regurgitationScore, setRegurgitationScore] = useState("0");
-  const [stoolScore, setStoolScore] = useState("0");
-  const [skinHeadScore, setSkinHeadScore] = useState("0");
-  const [skinArmsScore, setSkinArmsScore] = useState("0");
+  const [cryingScore, setCryingScore] = useState("");
+  const [regurgitationScore, setRegurgitationScore] = useState("");
+  const [stoolScore, setStoolScore] = useState("");
+  const [skinHeadScore, setSkinHeadScore] = useState("");
+  const [skinArmsScore, setSkinArmsScore] = useState("");
   const [urticariaPresent, setUrticariaPresent] = useState(false);
-  const [respiratoryScore, setRespiratoryScore] = useState("0");
+  const [respiratoryScore, setRespiratoryScore] = useState("");
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
 

@@ -58,6 +58,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   const [stoolScore, setStoolScore] = useState("0");
   const [skinHeadScore, setSkinHeadScore] = useState("0");
   const [skinArmsScore, setSkinArmsScore] = useState("0");
+  const [urticariaPresent, setUrticariaPresent] = useState(false);
   const [respiratoryScore, setRespiratoryScore] = useState("0");
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
@@ -160,6 +161,9 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
         regurgitation_score: validatedData.regurgitation_score,
         stool_score: validatedData.stool_score,
         skin_score: validatedData.skin_score,
+        skin_head_neck_trunk_score: parseInt(skinHeadScore) || 0,
+        skin_arms_hands_legs_feet_score: parseInt(skinArmsScore) || 0,
+        urticaria_present: urticariaPresent,
         respiratory_score: validatedData.respiratory_score,
         notes: validatedData.notes,
       };
@@ -520,6 +524,17 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                           <SelectItem value="6">Severe (6)</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+
+                    <div className="flex items-center space-x-2 pt-2">
+                      <Checkbox 
+                        id="urticaria" 
+                        checked={urticariaPresent}
+                        onCheckedChange={(checked) => setUrticariaPresent(checked === true)}
+                      />
+                      <Label htmlFor="urticaria" className="text-sm font-normal cursor-pointer">
+                        Urticaria present (+6)
+                      </Label>
                     </div>
                   </div>
                 </div>

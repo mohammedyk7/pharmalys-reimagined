@@ -25,6 +25,9 @@ interface Assessment {
   regurgitation_score: number;
   stool_score: number;
   skin_score: number;
+  skin_head_neck_trunk_score: number;
+  skin_arms_hands_legs_feet_score: number;
+  urticaria_present: boolean;
   respiratory_score: number;
   total_score: number;
   notes: string;
@@ -72,7 +75,9 @@ const AdminDashboard = () => {
       'Crying Score': assessment.crying_score,
       'Regurgitation Score': assessment.regurgitation_score,
       'Stool Score': assessment.stool_score,
-      'Skin Score': assessment.skin_score,
+      'Skin (Head/Neck/Trunk)': assessment.skin_head_neck_trunk_score,
+      'Skin (Arms/Hands/Legs/Feet)': assessment.skin_arms_hands_legs_feet_score,
+      'Urticaria Present': assessment.urticaria_present ? 'Yes' : 'No',
       'Respiratory Score': assessment.respiratory_score,
       'Total Score': assessment.total_score,
       'Notes': assessment.notes || '-'
@@ -174,7 +179,9 @@ const AdminDashboard = () => {
                 <TableHead className="text-center">Crying</TableHead>
                 <TableHead className="text-center">Regurgitation</TableHead>
                 <TableHead className="text-center">Stool</TableHead>
-                <TableHead className="text-center">Skin</TableHead>
+                <TableHead className="text-center">Skin (Head)</TableHead>
+                <TableHead className="text-center">Skin (Arms)</TableHead>
+                <TableHead className="text-center">Urticaria</TableHead>
                 <TableHead className="text-center">Respiratory</TableHead>
                 <TableHead className="text-center">Total Score</TableHead>
                 <TableHead>Notes</TableHead>
@@ -183,7 +190,7 @@ const AdminDashboard = () => {
             <TableBody>
               {assessments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={18} className="text-center text-muted-foreground">
+                  <TableCell colSpan={20} className="text-center text-muted-foreground">
                     No assessments found
                   </TableCell>
                 </TableRow>
@@ -204,7 +211,9 @@ const AdminDashboard = () => {
                     <TableCell className="text-center">{assessment.crying_score}</TableCell>
                     <TableCell className="text-center">{assessment.regurgitation_score}</TableCell>
                     <TableCell className="text-center">{assessment.stool_score}</TableCell>
-                    <TableCell className="text-center">{assessment.skin_score}</TableCell>
+                    <TableCell className="text-center">{assessment.skin_head_neck_trunk_score || 0}</TableCell>
+                    <TableCell className="text-center">{assessment.skin_arms_hands_legs_feet_score || 0}</TableCell>
+                    <TableCell className="text-center">{assessment.urticaria_present ? 'Yes' : 'No'}</TableCell>
                     <TableCell className="text-center">{assessment.respiratory_score}</TableCell>
                     <TableCell className="text-center font-bold">{assessment.total_score}</TableCell>
                     <TableCell className="text-sm max-w-xs truncate">{assessment.notes || '-'}</TableCell>

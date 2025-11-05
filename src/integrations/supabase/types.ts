@@ -33,10 +33,13 @@ export type Database = {
           patient_name: string
           regurgitation_score: number
           respiratory_score: number
+          skin_arms_hands_legs_feet_score: number | null
+          skin_head_neck_trunk_score: number | null
           skin_score: number
           stool_score: number
           total_score: number | null
           updated_at: string
+          urticaria_present: boolean | null
           user_id: string | null
         }
         Insert: {
@@ -57,10 +60,13 @@ export type Database = {
           patient_name: string
           regurgitation_score: number
           respiratory_score: number
+          skin_arms_hands_legs_feet_score?: number | null
+          skin_head_neck_trunk_score?: number | null
           skin_score: number
           stool_score: number
           total_score?: number | null
           updated_at?: string
+          urticaria_present?: boolean | null
           user_id?: string | null
         }
         Update: {
@@ -81,10 +87,13 @@ export type Database = {
           patient_name?: string
           regurgitation_score?: number
           respiratory_score?: number
+          skin_arms_hands_legs_feet_score?: number | null
+          skin_head_neck_trunk_score?: number | null
           skin_score?: number
           stool_score?: number
           total_score?: number | null
           updated_at?: string
+          urticaria_present?: boolean | null
           user_id?: string | null
         }
         Relationships: []

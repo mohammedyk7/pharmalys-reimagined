@@ -44,12 +44,6 @@ const Header = ({ user, onSignOut, showHomeButton = false }: HeaderProps) => {
           <img src={logo} alt="Pharmalys Laboratories" className="h-24" />
         </div>
         <nav className="flex items-center gap-6">
-          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Features
-          </a>
-          <Button variant="outline" size="sm" onClick={() => window.location.href = "#about"}>
-            About
-          </Button>
           {user && (
             <>
               {showHomeButton && (

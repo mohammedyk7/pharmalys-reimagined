@@ -64,8 +64,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
 
-  const totalScore = parseInt(cryingScore) + parseInt(regurgitationScore) + 
-                     parseInt(stoolScore) + parseInt(skinHeadScore) + parseInt(skinArmsScore) + parseInt(respiratoryScore);
+  const totalScore = (parseInt(cryingScore) || 0) + (parseInt(regurgitationScore) || 0) + 
+                     (parseInt(stoolScore) || 0) + (parseInt(skinHeadScore) || 0) + (parseInt(skinArmsScore) || 0) + (parseInt(respiratoryScore) || 0);
   const maxScore = 33;
 
   const getAnalysis = () => {
@@ -117,6 +117,12 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       return;
     }
 
+    // Validate all required symptom fields are selected
+    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !respiratoryScore) {
+      toast.error("Please select all symptom scores before saving");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -134,11 +140,11 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
         hospital_clinic: hospital,
         country: country || null,
         city: city || null,
-        crying_score: parseInt(cryingScore) || 0,
-        regurgitation_score: parseInt(regurgitationScore) || 0,
-        stool_score: parseInt(stoolScore) || 0,
-        skin_score: (parseInt(skinHeadScore) || 0) + (parseInt(skinArmsScore) || 0),
-        respiratory_score: parseInt(respiratoryScore) || 0,
+        crying_score: parseInt(cryingScore),
+        regurgitation_score: parseInt(regurgitationScore),
+        stool_score: parseInt(stoolScore),
+        skin_score: parseInt(skinHeadScore) + parseInt(skinArmsScore),
+        respiratory_score: parseInt(respiratoryScore),
         notes: notes || null,
       };
 

@@ -20,6 +20,7 @@ const Admin = () => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        setLoading(true); // Keep loading until admin check completes
 
         if (session?.user) {
           // Defer Supabase call with setTimeout to prevent deadlock

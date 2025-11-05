@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import logo from "@/assets/logo.png";
+import primalacImage from "@/assets/primalac-cma.png";
 import { z } from "zod";
 
 // Comprehensive validation schema for assessment form
@@ -582,6 +583,23 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
               </div>
               <Progress value={(totalScore / maxScore) * 100} className="h-2" />
               <p className="text-sm text-muted-foreground">{analysis.recommendation}</p>
+              
+              {/* Product Recommendation */}
+              {totalScore >= 10 && (
+                <div className="mt-6 p-4 border rounded-lg bg-muted/50">
+                  <h4 className="font-semibold mb-3 text-center">Recommended Product</h4>
+                  <div className="flex flex-col items-center gap-3">
+                    <img 
+                      src={primalacImage} 
+                      alt="Primalac ULTIMA CMA" 
+                      className="w-48 h-auto object-contain"
+                    />
+                    <p className="text-sm text-center text-muted-foreground">
+                      For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Consent */}
@@ -635,6 +653,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                     setStoolScore("0");
                     setSkinHeadScore("0");
                     setSkinArmsScore("0");
+                    setUrticariaPresent(false);
                     setRespiratoryScore("0");
                     setNotes("");
                     setConsent(false);

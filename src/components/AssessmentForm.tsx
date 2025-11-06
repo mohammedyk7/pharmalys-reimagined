@@ -263,18 +263,18 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     // Start Y position
     let y = margin;
     
-    // Add logo
-    doc.addImage(logo, 'PNG', margin, y, 90, 72);
+    // Add logo at top - increased size
+    doc.addImage(logo, 'PNG', margin, y, 140, 112);
     
     // Title - centered, blue
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
     doc.setTextColor(...brandBlue);
     const title = 'CoMiSS®: Cow\'s Milk-related Symptom Score';
-    doc.text(title, pageWidth / 2, y + 35, { align: 'center' });
+    doc.text(title, pageWidth / 2, y + 60, { align: 'center' });
     
     // Divider line under header
-    y += 50;
+    y += 85;
     doc.setLineWidth(1);
     doc.setDrawColor(...brandBlue);
     doc.line(margin, y, pageWidth - margin, y);

@@ -280,7 +280,33 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     y += 12;
     doc.setFontSize(16);
     doc.setTextColor(130, 183, 37); // Pharmalys green
-    doc.text(`Total Score: ${totalScore}`, 15, y);
+    doc.text(`Total Score: ${totalScore} / ${maxScore}`, 15, y);
+    
+    // Analysis
+    y += 10;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`${analysis.text} — ${gender}`, 15, y);
+    y += 6;
+    doc.setFontSize(10);
+    doc.text(analysis.recommendation, 15, y);
+    
+    // Product Recommendation (only in PDF for moderate to high scores)
+    if (totalScore >= 10) {
+      y += 15;
+      doc.setFontSize(14);
+      doc.setTextColor(0, 113, 188);
+      doc.text('Recommended Product', 105, y, { align: 'center' });
+      
+      y += 10;
+      // Add Primalac image
+      doc.addImage(primalacImage, 'PNG', 70, y, 70, 70);
+      
+      y += 75;
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      doc.text('For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)', 105, y, { align: 'center' });
+    }
     
     // Footer
     doc.setFontSize(8);
@@ -589,23 +615,6 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
               </div>
               <Progress value={(totalScore / maxScore) * 100} className="h-2" />
               <p className="text-sm text-muted-foreground">{analysis.recommendation}</p>
-              
-              {/* Product Recommendation */}
-              {totalScore >= 10 && (
-                <div className="mt-6 p-4 border rounded-lg bg-muted/50">
-                  <h4 className="font-semibold mb-3 text-center">Recommended Product</h4>
-                  <div className="flex flex-col items-center gap-3">
-                    <img 
-                      src={primalacImage} 
-                      alt="Primalac ULTIMA CMA" 
-                      className="w-48 h-auto object-contain"
-                    />
-                    <p className="text-sm text-center text-muted-foreground">
-                      For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Consent */}

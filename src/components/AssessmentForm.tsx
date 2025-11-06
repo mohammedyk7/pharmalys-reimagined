@@ -216,9 +216,9 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
     const doc = new jsPDF();
     
-    // Add logo
+    // Add logo (matching web header size h-24 ≈ 96px)
     const imgData = logo;
-    doc.addImage(imgData, 'PNG', 15, 12, 50, 18);
+    doc.addImage(imgData, 'PNG', 15, 10, 30, 24);
     
     // Title
     doc.setFontSize(18);
@@ -307,11 +307,6 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.setTextColor(0, 0, 0);
       doc.text('For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)', 105, y, { align: 'center' });
     }
-    
-    // Footer
-    doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text('© Pharmalys Laboratories - Confidential', 105, 280, { align: 'center' });
     
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, '_')}_${date}.pdf`);

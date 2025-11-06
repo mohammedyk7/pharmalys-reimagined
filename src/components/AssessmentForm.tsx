@@ -217,99 +217,153 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     const doc = new jsPDF({
       unit: 'pt',
       format: 'a4',
-      compress: true
+      compress: true,
+      putOnlyUsedFonts: true
     });
     
-    // Set default font
-    doc.setFont('helvetica');
+    // Page dimensions with 1-inch margins (72pt = 1 inch)
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 72;
+    const contentWidth = pageWidth - (margin * 2);
+    
+    // Colors
+    const brandBlue: [number, number, number] = [30, 136, 229]; // #1E88E5
+    const brandRed: [number, number, number] = [200, 50, 50];
+    const darkGray: [number, number, number] = [60, 60, 60];
+    const lightGray: [number, number, number] = [120, 120, 120];
+    const black: [number, number, number] = [0, 0, 0];
+    
+    // Helper function to draw a section header
+    const drawSectionHeader = (text: string, yPosition: number) => {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.setTextColor(...brandBlue);
+      doc.text(text, margin, yPosition);
+      doc.setLineWidth(0.5);
+      doc.setDrawColor(...lightGray);
+      doc.line(margin, yPosition + 3, pageWidth - margin, yPosition + 3);
+    };
+    
+    // Helper function to draw a table row
+    const drawTableRow = (label: string, value: string, yPosition: number, columnSplit = contentWidth / 2) => {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(...darkGray);
+      doc.text(label, margin, yPosition);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...black);
+      const valueLines = doc.splitTextToSize(value, columnSplit - 20);
+      doc.text(valueLines, margin + columnSplit, yPosition);
+      
+      return yPosition + (valueLines.length * 14);
+    };
+    
+    // Start Y position
+    let y = margin;
     
     // Add logo
-    const imgData = logo;
-    doc.addImage(imgData, 'PNG', 45, 30, 90, 72);
+    doc.addImage(logo, 'PNG', margin, y, 90, 72);
     
     // Title - centered, blue
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.setTextColor(0, 113, 188);
-    doc.setFont('helvetica', 'bold');
-    doc.text('CoMiSS: Cow\'s Milk-related Symptom Score', 297.5, 90, { align: 'center' });
+    doc.setTextColor(...brandBlue);
+    const title = 'CoMiSS®: Cow\'s Milk-related Symptom Score';
+    doc.text(title, pageWidth / 2, y + 35, { align: 'center' });
     
-    // Purpose box - right side
-    doc.setFontSize(9);
-    doc.setTextColor(200, 50, 50);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Purpose:', 380, 45);
+    // Divider line under header
+    y += 50;
+    doc.setLineWidth(1);
+    doc.setDrawColor(...brandBlue);
+    doc.line(margin, y, pageWidth - margin, y);
     
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(0, 0, 0);
-    const purposeText = 'CoMiSS is a simple, fast, and easy-to-use awareness tool for cow\'s milk-related symptoms. It increases awareness of the most common symptoms of cow\'s milk allergy (CMA). CoMiSS can also be used to evaluate and quantify the evolution of symptoms during the therapeutic intervention. CoMiSS is intended to be used in children from 0 to 24 months.';
-    const purposeLines = doc.splitTextToSize(purposeText, 170);
-    doc.text(purposeLines, 380, 55);
+    y += 20;
     
-    // Disclaimer box - right side
-    doc.setFontSize(9);
-    doc.setTextColor(200, 50, 50);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Disclaimer:', 380, 115);
+    // Purpose Section
+    drawSectionHeader('Purpose', y);
+    y += 18;
     
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.setTextColor(...black);
+    const purposeText = 'CoMiSS® is a simple, fast, and easy-to-use awareness tool for cow\'s milk-related symptoms. It increases awareness of the most common symptoms of cow\'s milk allergy (CMA). CoMiSS® can also be used to evaluate and quantify the evolution of symptoms during the therapeutic intervention. CoMiSS® is intended to be used in children from 0 to 24 months.';
+    const purposeLines = doc.splitTextToSize(purposeText, contentWidth);
+    doc.text(purposeLines, margin, y, { align: 'justify', maxWidth: contentWidth });
+    y += purposeLines.length * 12 + 12;
+    
+    // Disclaimer Section
+    drawSectionHeader('Disclaimer', y);
+    y += 18;
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...black);
     const disclaimerText = 'This tool is not intended for infants with severe and life-threatening symptoms clearly indicating CMA, including anaphylaxis, which requires urgent referral. Infants presenting with failure to thrive and sick infants with hematochezia require urgent referral and full diagnostic work up.';
-    const disclaimerLines = doc.splitTextToSize(disclaimerText, 170);
-    doc.text(disclaimerLines, 380, 125);
+    const disclaimerLines = doc.splitTextToSize(disclaimerText, contentWidth);
+    doc.text(disclaimerLines, margin, y, { align: 'justify', maxWidth: contentWidth });
+    y += disclaimerLines.length * 12 + 20;
     
     // Patient Details Section
-    let y = 195;
-    doc.setFontSize(13);
-    doc.setTextColor(0, 0, 0);
+    drawSectionHeader('Patient Details', y);
+    y += 18;
+    
+    // Draw table with 2 columns
+    const col1Width = contentWidth / 2;
+    y = drawTableRow('Name:', patientName, y, col1Width);
+    
+    // Second row - two items
     doc.setFont('helvetica', 'bold');
-    doc.text('Patient Details', 45, y);
-    
-    y += 5;
-    doc.setLineWidth(1.5);
-    doc.line(45, y, 550, y);
-    
-    y += 18;
     doc.setFontSize(10);
+    doc.setTextColor(...darkGray);
+    doc.text('Gender:', margin, y);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Name: ${patientName}`, 45, y);
-    doc.text(`Gender: ${gender}`, 340, y);
+    doc.setTextColor(...black);
+    doc.text(gender, margin + 60, y);
     
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...darkGray);
+    doc.text('Date:', margin + col1Width, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...black);
+    doc.text(date, margin + col1Width + 60, y);
     y += 18;
-    doc.text(`Age: ${age} months`, 45, y);
-    doc.text(`Date: ${date}`, 340, y);
     
+    // Third row
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...darkGray);
+    doc.text('Age:', margin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...black);
+    doc.text(`${age} months`, margin + 60, y);
+    
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...darkGray);
+    doc.text('Phone:', margin + col1Width, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...black);
+    doc.text(guardianPhone, margin + col1Width + 60, y);
     y += 18;
-    doc.text(`Guardian: ${guardianName}`, 45, y);
-    doc.text(`Phone: ${guardianPhone}`, 340, y);
+    
+    y = drawTableRow('Guardian:', guardianName, y, col1Width);
+    y += 12;
     
     // Clinician Details Section
-    y += 30;
-    doc.setFontSize(13);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Clinician Details', 45, y);
-    
-    y += 5;
-    doc.line(45, y, 550, y);
-    
+    drawSectionHeader('Clinician Details', y);
     y += 18;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Clinician: ${clinicianName}`, 45, y);
     
-    y += 18;
-    doc.text(`Hospital/Clinic: ${hospital}`, 45, y);
+    y = drawTableRow('Clinician:', clinicianName, y, col1Width);
+    y = drawTableRow('Hospital/Clinic:', hospital, y, col1Width);
     
     if (country) {
-      y += 18;
-      doc.text(`Country: ${country}`, 45, y);
+      y = drawTableRow('Country:', country, y, col1Width);
     }
     
     if (city) {
-      y += 18;
-      doc.text(`City: ${city}`, 45, y);
+      y = drawTableRow('City:', city, y, col1Width);
     }
+    y += 12;
     
     // Helper functions for symptom descriptions
     const getCryingDesc = (score: string) => {
@@ -329,8 +383,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       const descriptions: { [key: string]: string } = {
         '0': '0-2 episodes of small volumes per day',
         '1': 'Greater than or equal to 3 episodes of small volumes per day',
-        '2': 'Greater than or equal to 3 episodes of >half feed in <half feeds',
-        '3': 'Greater than or equal to 3 episodes of >half feed in >half feeds'
+        '2': 'Greater than or equal to 3 episodes of more than half feed in less than half feeds',
+        '3': 'Greater than or equal to 3 episodes of more than half feed in more than half feeds'
       };
       return descriptions[score] || '';
     };
@@ -365,43 +419,28 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     };
     
     // Symptoms Section
-    y += 30;
-    doc.setFontSize(13);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Symptoms', 45, y);
-    
-    y += 5;
-    doc.line(45, y, 550, y);
-    
+    drawSectionHeader('Symptoms', y);
     y += 18;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Crying: ${getCryingDesc(cryingScore)}`, 45, y);
     
-    y += 18;
-    doc.text(`Regurgitation: ${getRegurgitationDesc(regurgitationScore)}`, 45, y);
-    
-    y += 18;
-    doc.text(`Stool: ${getStoolDesc(stoolScore)}`, 45, y);
-    
-    y += 18;
-    doc.text(`Skin (Head/Neck/Trunk): ${getSkinDesc(skinHeadScore)}`, 45, y);
-    
-    y += 18;
-    doc.text(`Skin (Arms/Hands/Legs/Feet): ${getSkinDesc(skinArmsScore)}`, 45, y);
-    
-    y += 18;
-    doc.text(`Respiratory: ${getRespiratoryDesc(respiratoryScore)}`, 45, y);
+    y = drawTableRow('Crying:', getCryingDesc(cryingScore), y, contentWidth);
+    y = drawTableRow('Regurgitation:', getRegurgitationDesc(regurgitationScore), y, contentWidth);
+    y = drawTableRow('Stool:', getStoolDesc(stoolScore), y, contentWidth);
+    y = drawTableRow('Skin (Head/Neck/Trunk):', getSkinDesc(skinHeadScore), y, contentWidth);
+    y = drawTableRow('Skin (Arms/Hands/Legs/Feet):', getSkinDesc(skinArmsScore), y, contentWidth);
+    y = drawTableRow('Respiratory:', getRespiratoryDesc(respiratoryScore), y, contentWidth);
+    y += 12;
     
     // Score Section
-    y += 30;
-    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text(`Score: ${totalScore}`, 45, y);
-    doc.setFont('helvetica', 'normal');
-    
+    doc.setFontSize(14);
+    doc.setTextColor(...brandBlue);
+    doc.text(`Score: ${totalScore}`, margin, y);
     y += 20;
-    doc.setFontSize(10);
+    
+    // Interpretation text
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(...black);
     let interpretation = '';
     if (totalScore < 6) {
       interpretation = 'Symptoms are not likely to be related to CMA. Look for other causes.';
@@ -410,68 +449,66 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     } else {
       interpretation = 'May be suggestive of cow\'s milk-related symptoms and could potentially be CMA.';
     }
-    const interpretationLines = doc.splitTextToSize(interpretation, 500);
-    doc.text(interpretationLines, 45, y);
-    
-    y += (interpretationLines.length * 14) + 15;
+    const interpretationLines = doc.splitTextToSize(interpretation, contentWidth);
+    doc.text(interpretationLines, margin, y);
+    y += interpretationLines.length * 14 + 15;
     
     // Interpretation guide (small text)
-    doc.setFontSize(8);
-    doc.setTextColor(100, 100, 100);
     doc.setFont('helvetica', 'italic');
-    doc.text('Interpretation:', 45, y);
-    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(...lightGray);
     
-    y += 12;
-    doc.text('(Total score greater than or equal to 10) May be suggestive of cow\'s milk-related symptoms', 45, y);
+    const guide1 = '(Total score greater than or equal to 10): May be suggestive of cow\'s milk-related symptoms and could potentially be CMA.';
+    const guideLines1 = doc.splitTextToSize(guide1, contentWidth);
+    doc.text(guideLines1, margin, y, { lineHeightFactor: 1.2 });
+    y += guideLines1.length * 14 + 5;
     
-    y += 10;
-    doc.text('and could potentially be CMA.', 45, y);
-    
-    y += 12;
-    doc.text('(Total score less than 6) Symptoms are not likely to be related to CMA. Look for other causes.', 45, y);
-    
-    doc.setTextColor(0, 0, 0);
+    const guide2 = '(Total score less than 6): Symptoms are not likely to be related to CMA. Look for other causes.';
+    const guideLines2 = doc.splitTextToSize(guide2, contentWidth);
+    doc.text(guideLines2, margin, y, { lineHeightFactor: 1.2 });
+    y += guideLines2.length * 14 + 20;
     
     // Product Recommendation (only for scores >= 10)
     if (totalScore >= 10) {
-      y += 40;
-      doc.setFontSize(14);
-      doc.setTextColor(0, 113, 188);
+      // Light gray background box
+      doc.setFillColor(245, 245, 245);
+      const boxHeight = 240;
+      doc.rect(margin - 10, y - 10, contentWidth + 20, boxHeight, 'F');
+      
       doc.setFont('helvetica', 'bold');
-      doc.text('Recommended Product', 297.5, y, { align: 'center' });
+      doc.setFontSize(14);
+      doc.setTextColor(...brandBlue);
+      doc.text('Recommended Product', pageWidth / 2, y + 10, { align: 'center' });
+      
+      y += 30;
+      const imgWidth = 150;
+      const imgHeight = 150;
+      doc.addImage(primalacImage, 'PNG', (pageWidth - imgWidth) / 2, y, imgWidth, imgHeight);
+      
+      y += imgHeight + 15;
       doc.setFont('helvetica', 'normal');
-      
-      y += 20;
-      doc.addImage(primalacImage, 'PNG', 210, y, 175, 175);
-      
-      y += 185;
       doc.setFontSize(10);
-      doc.setTextColor(0, 0, 0);
-      doc.text('For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)', 297.5, y, { align: 'center' });
+      doc.setTextColor(...black);
+      doc.text('For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)', pageWidth / 2, y, { align: 'center' });
+      y += 30;
     }
     
-    // Bottom disclaimer
-    const pageHeight = doc.internal.pageSize.height;
-    y = pageHeight - 90;
-    doc.setFontSize(8);
-    doc.setTextColor(200, 50, 50);
+    // Bottom disclaimer (Footer)
+    const footerY = pageHeight - margin - 50;
     doc.setFont('helvetica', 'bold');
-    doc.text('Disclaimer:', 45, y);
+    doc.setFontSize(9);
+    doc.setTextColor(...brandRed);
+    doc.text('Disclaimer:', margin, footerY);
+    
     doc.setFont('helvetica', 'normal');
-    doc.setTextColor(80, 80, 80);
+    doc.setFontSize(9);
+    doc.setTextColor(...lightGray);
     
-    y += 10;
-    const bottomDisclaimer = 'CoMiSS scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge.';
-    const bottomLines1 = doc.splitTextToSize(bottomDisclaimer, 500);
-    doc.text(bottomLines1, 45, y);
+    const footerText = 'CoMiSS® scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge. Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow\'s milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.';
+    const footerLines = doc.splitTextToSize(footerText, contentWidth);
+    doc.text(footerLines, margin, footerY + 12, { align: 'justify', maxWidth: contentWidth, lineHeightFactor: 1.2 });
     
-    y += (bottomLines1.length * 10) + 5;
-    const bottomDisclaimer2 = 'Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow\'s milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.';
-    const bottomLines2 = doc.splitTextToSize(bottomDisclaimer2, 500);
-    doc.text(bottomLines2, 45, y);
-    
-    // Save PDF
+    // Save PDF with proper settings
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, '_')}_${date}.pdf`);
     toast.success("PDF exported successfully");
   };

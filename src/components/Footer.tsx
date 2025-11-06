@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
+import { memo } from "react";
 
-const Footer = () => {
+const Footer = memo(() => {
   return (
     <footer className="border-t border-border bg-muted/30 py-8">
       <div className="container mx-auto px-4">
@@ -24,6 +25,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;

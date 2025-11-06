@@ -1,7 +1,8 @@
 import { Award, Shield, Workflow, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { memo } from "react";
 
-const Features = () => {
+const Features = memo(() => {
   const features = [
     {
       icon: Award,
@@ -42,6 +43,8 @@ const Features = () => {
       </div>
     </section>
   );
-};
+});
+
+Features.displayName = "Features";
 
 export default Features;

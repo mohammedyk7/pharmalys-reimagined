@@ -221,149 +221,118 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       putOnlyUsedFonts: true
     });
     
-    // Page dimensions with 1-inch margins (72pt = 1 inch)
+    // Page dimensions with proper margins
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
-    const margin = 72;
+    const margin = 50;
     const contentWidth = pageWidth - (margin * 2);
     
     // Colors
-    const brandBlue: [number, number, number] = [30, 136, 229]; // #1E88E5
-    const brandRed: [number, number, number] = [200, 50, 50];
+    const brandBlue: [number, number, number] = [30, 136, 229];
     const darkGray: [number, number, number] = [60, 60, 60];
-    const lightGray: [number, number, number] = [120, 120, 120];
+    const lightGray: [number, number, number] = [150, 150, 150];
     const black: [number, number, number] = [0, 0, 0];
     
     // Helper function to draw a section header
     const drawSectionHeader = (text: string, yPosition: number) => {
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(13);
+      doc.setFontSize(12);
       doc.setTextColor(...brandBlue);
       doc.text(text, margin, yPosition);
       doc.setLineWidth(0.5);
       doc.setDrawColor(...lightGray);
       doc.line(margin, yPosition + 3, pageWidth - margin, yPosition + 3);
+      return yPosition + 15;
     };
     
-    // Helper function to draw a table row
-    const drawTableRow = (label: string, value: string, yPosition: number, columnSplit = contentWidth / 2) => {
+    // Helper function to draw a field
+    const drawField = (label: string, value: string, x: number, yPosition: number, maxWidth: number) => {
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setTextColor(...darkGray);
-      doc.text(label, margin, yPosition);
+      doc.text(label, x, yPosition);
       
       doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
       doc.setTextColor(...black);
-      const valueLines = doc.splitTextToSize(value, columnSplit - 20);
-      doc.text(valueLines, margin + columnSplit, yPosition);
-      
-      return yPosition + (valueLines.length * 14);
+      doc.text(value, x + 80, yPosition);
     };
     
     // Start Y position
     let y = margin;
     
-    // Add logo at top - increased size
-    doc.addImage(logo, 'PNG', margin, y, 140, 112);
+    // Header with logo and title side by side
+    const logoWidth = 100;
+    const logoHeight = 80;
+    doc.addImage(logo, 'PNG', margin, y, logoWidth, logoHeight);
     
-    // Title - centered, blue
+    // Title next to logo
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
+    doc.setFontSize(16);
     doc.setTextColor(...brandBlue);
-    const title = 'CoMiSS®: Cow\'s Milk-related Symptom Score';
-    doc.text(title, pageWidth / 2, y + 60, { align: 'center' });
+    const titleX = margin + logoWidth + 20;
+    doc.text("CoMiSS®:", titleX, y + 25);
+    doc.setFontSize(14);
+    doc.text("Cow's Milk-related", titleX, y + 45);
+    doc.text("Symptom Score", titleX, y + 60);
     
-    // Divider line under header
-    y += 85;
-    doc.setLineWidth(1);
+    y += logoHeight + 20;
+    
+    // Horizontal line
+    doc.setLineWidth(1.5);
     doc.setDrawColor(...brandBlue);
     doc.line(margin, y, pageWidth - margin, y);
-    
     y += 20;
     
     // Purpose Section
-    drawSectionHeader('Purpose', y);
-    y += 18;
-    
+    y = drawSectionHeader('Purpose', y);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(...black);
     const purposeText = 'CoMiSS® is a simple, fast, and easy-to-use awareness tool for cow\'s milk-related symptoms. It increases awareness of the most common symptoms of cow\'s milk allergy (CMA). CoMiSS® can also be used to evaluate and quantify the evolution of symptoms during the therapeutic intervention. CoMiSS® is intended to be used in children from 0 to 24 months.';
     const purposeLines = doc.splitTextToSize(purposeText, contentWidth);
-    doc.text(purposeLines, margin, y, { align: 'justify', maxWidth: contentWidth });
-    y += purposeLines.length * 12 + 12;
+    doc.text(purposeLines, margin, y);
+    y += purposeLines.length * 11 + 15;
     
     // Disclaimer Section
-    drawSectionHeader('Disclaimer', y);
-    y += 18;
-    
+    y = drawSectionHeader('Disclaimer', y);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(...black);
     const disclaimerText = 'This tool is not intended for infants with severe and life-threatening symptoms clearly indicating CMA, including anaphylaxis, which requires urgent referral. Infants presenting with failure to thrive and sick infants with hematochezia require urgent referral and full diagnostic work up.';
     const disclaimerLines = doc.splitTextToSize(disclaimerText, contentWidth);
-    doc.text(disclaimerLines, margin, y, { align: 'justify', maxWidth: contentWidth });
-    y += disclaimerLines.length * 12 + 20;
+    doc.text(disclaimerLines, margin, y);
+    y += disclaimerLines.length * 11 + 15;
     
     // Patient Details Section
-    drawSectionHeader('Patient Details', y);
-    y += 18;
+    y = drawSectionHeader('Patient Details', y);
+    const col1X = margin;
+    const col2X = margin + (contentWidth / 2);
     
-    // Draw table with 2 columns
-    const col1Width = contentWidth / 2;
-    y = drawTableRow('Name:', patientName, y, col1Width);
+    drawField('Name:', patientName, col1X, y, 200);
+    drawField('Date:', date, col2X, y, 200);
+    y += 15;
     
-    // Second row - two items
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(...darkGray);
-    doc.text('Gender:', margin, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...black);
-    doc.text(gender, margin + 60, y);
+    drawField('Gender:', gender, col1X, y, 200);
+    drawField('Age:', `${age} months`, col2X, y, 200);
+    y += 15;
     
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...darkGray);
-    doc.text('Date:', margin + col1Width, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...black);
-    doc.text(date, margin + col1Width + 60, y);
-    y += 18;
-    
-    // Third row
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...darkGray);
-    doc.text('Age:', margin, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...black);
-    doc.text(`${age} months`, margin + 60, y);
-    
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...darkGray);
-    doc.text('Phone:', margin + col1Width, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...black);
-    doc.text(guardianPhone, margin + col1Width + 60, y);
-    y += 18;
-    
-    y = drawTableRow('Guardian:', guardianName, y, col1Width);
-    y += 12;
+    drawField('Guardian:', guardianName, col1X, y, 200);
+    drawField('Phone:', guardianPhone, col2X, y, 200);
+    y += 20;
     
     // Clinician Details Section
-    drawSectionHeader('Clinician Details', y);
-    y += 18;
+    y = drawSectionHeader('Clinician Details', y);
+    drawField('Clinician:', clinicianName, col1X, y, 200);
+    drawField('Hospital/Clinic:', hospital, col2X, y, 200);
+    y += 15;
     
-    y = drawTableRow('Clinician:', clinicianName, y, col1Width);
-    y = drawTableRow('Hospital/Clinic:', hospital, y, col1Width);
-    
-    if (country) {
-      y = drawTableRow('Country:', country, y, col1Width);
+    if (country || city) {
+      if (country) drawField('Country:', country, col1X, y, 200);
+      if (city) drawField('City:', city, col2X, y, 200);
+      y += 15;
     }
-    
-    if (city) {
-      y = drawTableRow('City:', city, y, col1Width);
-    }
-    y += 12;
+    y += 5;
     
     // Helper functions for symptom descriptions
     const getCryingDesc = (score: string) => {
@@ -382,9 +351,9 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     const getRegurgitationDesc = (score: string) => {
       const descriptions: { [key: string]: string } = {
         '0': '0-2 episodes of small volumes per day',
-        '1': 'Greater than or equal to 3 episodes of small volumes per day',
-        '2': 'Greater than or equal to 3 episodes of more than half feed in less than half feeds',
-        '3': 'Greater than or equal to 3 episodes of more than half feed in more than half feeds'
+        '1': '3+ episodes of small volumes per day',
+        '2': '3+ episodes of >half feed in <half feeds',
+        '3': '3+ episodes of >half feed in >half feeds'
       };
       return descriptions[score] || '';
     };
@@ -419,27 +388,33 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     };
     
     // Symptoms Section
-    drawSectionHeader('Symptoms', y);
-    y += 18;
+    y = drawSectionHeader('Symptoms', y);
     
-    y = drawTableRow('Crying:', getCryingDesc(cryingScore), y, contentWidth);
-    y = drawTableRow('Regurgitation:', getRegurgitationDesc(regurgitationScore), y, contentWidth);
-    y = drawTableRow('Stool:', getStoolDesc(stoolScore), y, contentWidth);
-    y = drawTableRow('Skin (Head/Neck/Trunk):', getSkinDesc(skinHeadScore), y, contentWidth);
-    y = drawTableRow('Skin (Arms/Hands/Legs/Feet):', getSkinDesc(skinArmsScore), y, contentWidth);
-    y = drawTableRow('Respiratory:', getRespiratoryDesc(respiratoryScore), y, contentWidth);
+    drawField('Crying:', getCryingDesc(cryingScore), col1X, y, contentWidth);
     y += 12;
-    
-    // Score Section
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(...brandBlue);
-    doc.text(`Score: ${totalScore}`, margin, y);
+    drawField('Regurgitation:', getRegurgitationDesc(regurgitationScore), col1X, y, contentWidth);
+    y += 12;
+    drawField('Stool:', getStoolDesc(stoolScore), col1X, y, contentWidth);
+    y += 12;
+    drawField('Skin (Head/Neck/Trunk):', getSkinDesc(skinHeadScore), col1X, y, contentWidth);
+    y += 12;
+    drawField('Skin (Arms/Hands/Legs/Feet):', getSkinDesc(skinArmsScore), col1X, y, contentWidth);
+    y += 12;
+    drawField('Respiratory:', getRespiratoryDesc(respiratoryScore), col1X, y, contentWidth);
     y += 20;
+    
+    // Score Section - highlighted box
+    doc.setFillColor(240, 248, 255);
+    doc.rect(margin - 10, y - 10, contentWidth + 20, 50, 'F');
+    
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(...brandBlue);
+    doc.text(`Score: ${totalScore}`, margin, y + 10);
     
     // Interpretation text
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setTextColor(...black);
     let interpretation = '';
     if (totalScore < 6) {
@@ -449,66 +424,74 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     } else {
       interpretation = 'May be suggestive of cow\'s milk-related symptoms and could potentially be CMA.';
     }
-    const interpretationLines = doc.splitTextToSize(interpretation, contentWidth);
-    doc.text(interpretationLines, margin, y);
-    y += interpretationLines.length * 14 + 15;
+    doc.text(interpretation, margin, y + 30);
+    y += 60;
     
-    // Interpretation guide (small text)
+    // Interpretation guide
     doc.setFont('helvetica', 'italic');
-    doc.setFontSize(11);
+    doc.setFontSize(8);
     doc.setTextColor(...lightGray);
     
-    const guide1 = '(Total score greater than or equal to 10): May be suggestive of cow\'s milk-related symptoms and could potentially be CMA.';
+    const guide1 = '(Total score >= 10): May be suggestive of cow\'s milk-related symptoms and could potentially be CMA.';
     const guideLines1 = doc.splitTextToSize(guide1, contentWidth);
-    doc.text(guideLines1, margin, y, { lineHeightFactor: 1.2 });
-    y += guideLines1.length * 14 + 5;
+    doc.text(guideLines1, margin, y);
+    y += guideLines1.length * 10 + 5;
     
-    const guide2 = '(Total score less than 6): Symptoms are not likely to be related to CMA. Look for other causes.';
+    const guide2 = '(Total score < 6): Symptoms are not likely to be related to CMA. Look for other causes.';
     const guideLines2 = doc.splitTextToSize(guide2, contentWidth);
-    doc.text(guideLines2, margin, y, { lineHeightFactor: 1.2 });
-    y += guideLines2.length * 14 + 20;
+    doc.text(guideLines2, margin, y);
+    y += guideLines2.length * 10 + 20;
     
     // Product Recommendation (only for scores >= 10)
     if (totalScore >= 10) {
-      // Light gray background box
-      doc.setFillColor(245, 245, 245);
-      const boxHeight = 240;
+      y = drawSectionHeader('Recommended Product', y);
+      
+      // Light background
+      doc.setFillColor(250, 250, 250);
+      const boxHeight = 180;
       doc.rect(margin - 10, y - 10, contentWidth + 20, boxHeight, 'F');
       
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
-      doc.setTextColor(...brandBlue);
-      doc.text('Recommended Product', pageWidth / 2, y + 10, { align: 'center' });
+      // Image centered
+      const imgWidth = 120;
+      const imgHeight = 120;
+      doc.addImage(primalacImage, 'PNG', (pageWidth - imgWidth) / 2, y + 5, imgWidth, imgHeight);
       
-      y += 30;
-      const imgWidth = 150;
-      const imgHeight = 150;
-      doc.addImage(primalacImage, 'PNG', (pageWidth - imgWidth) / 2, y, imgWidth, imgHeight);
-      
-      y += imgHeight + 15;
+      y += imgHeight + 20;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
       doc.setTextColor(...black);
-      doc.text('For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)', pageWidth / 2, y, { align: 'center' });
-      y += 30;
+      const productText = 'For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)';
+      doc.text(productText, pageWidth / 2, y, { align: 'center' });
+      y += 40;
     }
     
-    // Bottom disclaimer (Footer)
-    const footerY = pageHeight - margin - 50;
+    // Notes section if present
+    if (notes) {
+      y = drawSectionHeader('Notes', y);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...black);
+      const notesLines = doc.splitTextToSize(notes, contentWidth);
+      doc.text(notesLines, margin, y);
+      y += notesLines.length * 11 + 15;
+    }
+    
+    // Bottom disclaimer (Footer) - always at bottom of page
+    const footerY = pageHeight - margin - 40;
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(...brandRed);
+    doc.setFontSize(8);
+    doc.setTextColor(200, 50, 50);
     doc.text('Disclaimer:', margin, footerY);
     
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.setTextColor(...lightGray);
     
     const footerText = 'CoMiSS® scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge. Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow\'s milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.';
     const footerLines = doc.splitTextToSize(footerText, contentWidth);
-    doc.text(footerLines, margin, footerY + 12, { align: 'justify', maxWidth: contentWidth, lineHeightFactor: 1.2 });
+    doc.text(footerLines, margin, footerY + 10);
     
-    // Save PDF with proper settings
+    // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, '_')}_${date}.pdf`);
     toast.success("PDF exported successfully");
   };

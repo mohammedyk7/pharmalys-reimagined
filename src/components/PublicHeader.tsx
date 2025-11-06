@@ -1,18 +1,18 @@
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import { Moon, Sun, Home, Mail, Info, LogOut } from "lucide-react";
-import { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const PublicHeader = memo(() => {
+const PublicHeader = () => {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  const checkAuthStatus = useCallback(async () => {
+  const checkAuthStatus = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setIsLoggedIn(!!user);
     
@@ -29,7 +29,7 @@ const PublicHeader = memo(() => {
     } else {
       setIsAdmin(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark");
@@ -44,19 +44,19 @@ const PublicHeader = memo(() => {
     });
     
     return () => subscription.unsubscribe();
-  }, [checkAuthStatus]);
+  }, []);
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     document.documentElement.classList.toggle("dark");
-  }, [theme]);
+  };
 
-  const handleSignOut = useCallback(async () => {
+  const handleSignOut = async () => {
     await supabase.auth.signOut();
     toast.success("Signed out successfully");
     navigate("/");
-  }, [navigate]);
+  };
 
   return (
     <header className="border-b border-border bg-card relative">
@@ -113,8 +113,6 @@ const PublicHeader = memo(() => {
       </div>
     </header>
   );
-});
-
-PublicHeader.displayName = "PublicHeader";
+};
 
 export default PublicHeader;

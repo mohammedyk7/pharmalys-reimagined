@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { memo } from "react";
 
-const Hero = memo(() => {
+const Hero = () => {
   return (
     <section className="py-12 md:py-20 bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4 text-center max-w-4xl">
@@ -24,8 +23,6 @@ const Hero = memo(() => {
       </div>
     </section>
   );
-});
-
-Hero.displayName = "Hero";
+};
 
 export default Hero;

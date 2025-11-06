@@ -216,23 +216,47 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
     const doc = new jsPDF();
     
-    // Add logo (matching web header size h-24 ≈ 96px)
+    // Add logo
     const imgData = logo;
     doc.addImage(imgData, 'PNG', 15, 10, 30, 24);
     
     // Title
-    doc.setFontSize(18);
-    doc.setTextColor(0, 113, 188); // Pharmalys blue
-    doc.text('CoMiSS Assessment Report', 105, 40, { align: 'center' });
+    doc.setFontSize(16);
+    doc.setTextColor(0, 113, 188); // Blue
+    doc.text('CoMiSS®: Cow\'s Milk-related Symptom Score', 105, 30, { align: 'center' });
     
-    doc.setFontSize(10);
+    // Purpose and Disclaimer boxes on the right
+    doc.setFontSize(7);
+    doc.setTextColor(200, 50, 50); // Red for headers
+    doc.setFont(undefined, 'bold');
+    doc.text('Purpose:', 125, 15);
+    doc.setFont(undefined, 'normal');
     doc.setTextColor(0, 0, 0);
+    const purposeText = 'CoMiSS® is a simple, fast, and easy-to-use awareness tool for cow\'s milk-related symptoms. It increases awareness of the most common symptoms of cow\'s milk allergy (CMA). CoMiSS® can also be used to evaluate and quantify the evolution of symptoms during the therapeutic intervention. CoMiSS® is intended to be used in children from 0 to 24 months.';
+    const purposeLines = doc.splitTextToSize(purposeText, 70);
+    doc.text(purposeLines, 125, 19);
+    
+    doc.setFontSize(7);
+    doc.setTextColor(200, 50, 50); // Red
+    doc.setFont(undefined, 'bold');
+    doc.text('Disclaimer:', 125, 38);
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(0, 0, 0);
+    const disclaimerText = 'This tool is not intended for infants with severe and life-threatening symptoms clearly indicating CMA, including anaphylaxis, which requires urgent referral. Infants presenting with failure to thrive and sick infants with hematochezia require urgent referral and full diagnostic work up.';
+    const disclaimerLines = doc.splitTextToSize(disclaimerText, 70);
+    doc.text(disclaimerLines, 125, 42);
     
     // Patient Details
-    let y = 50;
-    doc.setFontSize(14);
+    let y = 65;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'bold');
     doc.text('Patient Details', 15, y);
-    y += 8;
+    doc.setFont(undefined, 'normal');
+    y += 2;
+    doc.setLineWidth(0.5);
+    doc.line(15, y, 195, y);
+    y += 6;
     doc.setFontSize(10);
     doc.text(`Name: ${patientName}`, 15, y);
     doc.text(`Gender: ${gender}`, 120, y);
@@ -245,61 +269,140 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     
     // Clinician Details
     y += 12;
-    doc.setFontSize(14);
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
     doc.text('Clinician Details', 15, y);
-    y += 8;
+    doc.setFont(undefined, 'normal');
+    y += 2;
+    doc.line(15, y, 195, y);
+    y += 6;
     doc.setFontSize(10);
     doc.text(`Clinician: ${clinicianName}`, 15, y);
     y += 6;
     doc.text(`Hospital/Clinic: ${hospital}`, 15, y);
-    if (country) {
-      y += 6;
-      doc.text(`Country: ${country}`, 15, y);
-    }
+    y += 6;
+    doc.text(`Country: ${country || ''}`, 15, y);
     if (city) {
       y += 6;
       doc.text(`City: ${city}`, 15, y);
     }
     
-    // CoMiSS Scores
+    // Helper function to get symptom description
+    const getCryingDesc = (score: string) => {
+      const descriptions: { [key: string]: string } = {
+        '0': '≤1 hour per day',
+        '1': '1 to 1.5 hours per day',
+        '2': '1.5 to 2 hours per day',
+        '3': '2 to 3 hours per day',
+        '4': '3 to 4 hours per day',
+        '5': '4 to 5 hours per day',
+        '6': '≥5 hours per day'
+      };
+      return descriptions[score] || '';
+    };
+    
+    const getRegurgitationDesc = (score: string) => {
+      const descriptions: { [key: string]: string } = {
+        '0': '0-2 episodes small volumes/day',
+        '1': '≥3 episodes small volumes/day',
+        '2': '≥3 episodes >half feed <half feeds',
+        '3': '≥3 episodes >half feed ≥half feeds'
+      };
+      return descriptions[score] || '';
+    };
+    
+    const getStoolDesc = (score: string) => {
+      const descriptions: { [key: string]: string } = {
+        '0': 'Normal stool (Type 1, 4)',
+        '3': 'Abnormal stool (Type 2, 3)',
+        '6': 'Abnormal stool (Type 5, 6)'
+      };
+      return descriptions[score] || '';
+    };
+    
+    const getSkinDesc = (score: string) => {
+      const descriptions: { [key: string]: string } = {
+        '0': 'Absent',
+        '2': 'Mild',
+        '4': 'Moderate',
+        '6': 'Severe'
+      };
+      return descriptions[score] || '';
+    };
+    
+    const getRespiratoryDesc = (score: string) => {
+      const descriptions: { [key: string]: string } = {
+        '0': 'No respiratory symptoms',
+        '1': 'Slight symptoms',
+        '2': 'Mild symptoms',
+        '3': 'Severe symptoms'
+      };
+      return descriptions[score] || '';
+    };
+    
+    // Symptoms Section
     y += 12;
-    doc.setFontSize(14);
-    doc.text('CoMiSS Scores', 15, y);
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('Symptoms', 15, y);
+    doc.setFont(undefined, 'normal');
+    y += 2;
+    doc.line(15, y, 195, y);
+    y += 6;
+    doc.setFontSize(10);
+    doc.text(`Crying: ${getCryingDesc(cryingScore)}`, 15, y);
+    doc.text(`Regurgitation: ${getRegurgitationDesc(regurgitationScore)}`, 70, y);
+    doc.text(`Stool: ${getStoolDesc(stoolScore)}`, 130, y);
+    y += 6;
+    doc.text(`Skin (Head/Neck/Trunk): ${getSkinDesc(skinHeadScore)}`, 15, y);
+    doc.text(`Skin (Arms/Hands/Legs/Feet): ${getSkinDesc(skinArmsScore)}`, 70, y);
+    y += 6;
+    doc.text(`Respiratory: ${getRespiratoryDesc(respiratoryScore)}`, 15, y);
+    
+    // Score and interpretation
+    y += 12;
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text(`Score: ${totalScore}`, 15, y);
+    doc.setFont(undefined, 'normal');
+    
     y += 8;
     doc.setFontSize(10);
-    doc.text(`Crying: ${cryingScore}`, 15, y);
-    doc.text(`Regurgitation: ${regurgitationScore}`, 70, y);
-    doc.text(`Stool: ${stoolScore}`, 125, y);
-    y += 6;
-    doc.text(`Skin (Head/Neck/Trunk): ${skinHeadScore}`, 15, y);
-    doc.text(`Skin (Arms/Hands/Legs/Feet): ${skinArmsScore}`, 70, y);
-    y += 6;
-    doc.text(`Respiratory: ${respiratoryScore}`, 15, y);
+    let interpretation = '';
+    if (totalScore < 6) {
+      interpretation = 'Symptoms are not likely to be related to CMA. Look for other causes.';
+    } else if (totalScore >= 6 && totalScore <= 9) {
+      interpretation = 'More investigation is needed.';
+    } else {
+      interpretation = 'May be suggestive of cow\'s milk-related symptoms and could potentially be CMA.';
+    }
+    const interpretationLines = doc.splitTextToSize(interpretation, 180);
+    doc.text(interpretationLines, 15, y);
     
-    // Total Score
-    y += 12;
-    doc.setFontSize(16);
-    doc.setTextColor(130, 183, 37); // Pharmalys green
-    doc.text(`Total Score: ${totalScore} / ${maxScore}`, 15, y);
-    
-    // Analysis
-    y += 10;
-    doc.setFontSize(12);
+    y += interpretationLines.length * 5 + 6;
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.setFont(undefined, 'italic');
+    doc.text('Interpretation:', 15, y);
+    doc.setFont(undefined, 'normal');
+    y += 4;
+    const smallText = '(Total score ≥ 10) May be suggestive of cow\'s milk-related symptoms and could potentially be CMA.';
+    doc.text(smallText, 15, y);
+    y += 4;
+    const smallText2 = '(Total score < 6) Symptoms are not likely to be related to CMA. Look for other causes.';
+    doc.text(smallText2, 15, y);
     doc.setTextColor(0, 0, 0);
-    doc.text(`${analysis.text} — ${gender}`, 15, y);
-    y += 6;
-    doc.setFontSize(10);
-    doc.text(analysis.recommendation, 15, y);
     
-    // Product Recommendation (only in PDF for moderate to high scores)
+    // Product Recommendation (only for scores >= 10)
     if (totalScore >= 10) {
       y += 15;
       doc.setFontSize(14);
       doc.setTextColor(0, 113, 188);
+      doc.setFont(undefined, 'bold');
       doc.text('Recommended Product', 105, y, { align: 'center' });
+      doc.setFont(undefined, 'normal');
       
       y += 10;
-      // Add Primalac image
       doc.addImage(primalacImage, 'PNG', 70, y, 70, 70);
       
       y += 75;
@@ -307,6 +410,24 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.setTextColor(0, 0, 0);
       doc.text('For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)', 105, y, { align: 'center' });
     }
+    
+    // Bottom disclaimer
+    const pageHeight = doc.internal.pageSize.height;
+    y = pageHeight - 35;
+    doc.setFontSize(7);
+    doc.setTextColor(200, 50, 50);
+    doc.setFont(undefined, 'bold');
+    doc.text('Disclaimer:', 15, y);
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(0, 0, 0);
+    y += 3;
+    const bottomDisclaimer = 'CoMiSS® scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge.';
+    const bottomLines1 = doc.splitTextToSize(bottomDisclaimer, 180);
+    doc.text(bottomLines1, 15, y);
+    y += bottomLines1.length * 3 + 2;
+    const bottomDisclaimer2 = 'Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow\'s milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.';
+    const bottomLines2 = doc.splitTextToSize(bottomDisclaimer2, 180);
+    doc.text(bottomLines2, 15, y);
     
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, '_')}_${date}.pdf`);

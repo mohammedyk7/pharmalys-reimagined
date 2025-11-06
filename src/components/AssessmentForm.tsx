@@ -493,13 +493,10 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                       <SelectValue placeholder="Select regurgitation level" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">0–2 episodes per day (0)</SelectItem>
-                      <SelectItem value="1">3 to 5 episodes per day (1)</SelectItem>
-                      <SelectItem value="2">&gt; 5 episodes of &lt; 5 mL (2)</SelectItem>
-                      <SelectItem value="3">&gt; 5 episodes of ½ feed in &lt; ½ feeds (3)</SelectItem>
-                      <SelectItem value="4">Continuous regurgitation of small volumes &gt; 30 min after each feed (4)</SelectItem>
-                      <SelectItem value="5">Regurgitation of half to complete volume of feed in latter half of feeds (5)</SelectItem>
-                      <SelectItem value="6">Regurgitation of complete feed after each feeding (6)</SelectItem>
+                      <SelectItem value="0">0–2 episodes of small volumes per day (0)</SelectItem>
+                      <SelectItem value="1">≥ 3 episodes of small volumes per day (1)</SelectItem>
+                      <SelectItem value="2">≥ 3 episodes of &gt; half of the feed volume in &lt; half of feeds (2)</SelectItem>
+                      <SelectItem value="3">≥ 3 episodes of &gt; half of the feed volume in ≥ half of feeds (3)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -512,9 +509,9 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
                       <SelectValue placeholder="Select stool type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">Formed stools (0)</SelectItem>
-                      <SelectItem value="4">Hard or loose stools (4)</SelectItem>
-                      <SelectItem value="6">Watery or bloody stools (6)</SelectItem>
+                      <SelectItem value="0">Type 1 and 4 (0)</SelectItem>
+                      <SelectItem value="3">Type 2 and 3 (3)</SelectItem>
+                      <SelectItem value="6">Type 5 and 6 (6)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

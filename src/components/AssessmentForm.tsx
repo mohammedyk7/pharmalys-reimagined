@@ -218,7 +218,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     
     // Add logo
     const imgData = logo;
-    doc.addImage(imgData, 'PNG', 15, 10, 50, 15);
+    doc.addImage(imgData, 'PNG', 15, 15, 40, 12);
     
     // Title
     doc.setFontSize(18);

@@ -218,12 +218,12 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     
     // Add logo
     const imgData = logo;
-    doc.addImage(imgData, 'PNG', 15, 15, 40, 12);
+    doc.addImage(imgData, 'PNG', 15, 12, 50, 18);
     
     // Title
     doc.setFontSize(18);
     doc.setTextColor(0, 113, 188); // Pharmalys blue
-    doc.text('CoMiSS Assessment Report', 105, 35, { align: 'center' });
+    doc.text('CoMiSS Assessment Report', 105, 40, { align: 'center' });
     
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);

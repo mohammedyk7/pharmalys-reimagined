@@ -501,8 +501,8 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     let y = margin;
 
     // Pharmalys logo - LEFT SIDE - BIGGER SIZE
-    const logoWidth = 130;
-    const logoHeight = 120;
+    const logoWidth = 100;
+    const logoHeight = 80;
     const logoX = margin; // LEFT ALIGNED
     doc.addImage(logo, "PNG", logoX, y, logoWidth, logoHeight);
 

@@ -260,26 +260,30 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.text(value, x + 80, yPosition);
     };
     
-    // Start Y position
-    let y = margin - 10; // Move title up
+    // Start Y position with more spacing
+    let y = margin + 10;
     
-    // Header with logo and title side by side
-    const logoWidth = 100;
-    const logoHeight = 80;
+    // Pharmalys logo on top-left
+    const logoWidth = 45;
+    const logoHeight = 36;
     doc.addImage(logo, 'PNG', margin, y, logoWidth, logoHeight);
     
-    // Title next to logo - bigger size
+    // Main title - bigger, bold, centered, darker blue (#1E3A8A)
+    const darkerBlue: [number, number, number] = [30, 58, 138];
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(20);
-    doc.setTextColor(...brandBlue);
-    const titleX = margin + logoWidth + 20;
-    doc.text("CoMiSS®: Cow's Milk-related Symptom Score", titleX, y + 35);
+    doc.setFontSize(22);
+    doc.setTextColor(...darkerBlue);
+    const titleText = "CoMiSS®: Cow's Milk-related Symptom Score";
+    const titleWidth = doc.getTextWidth(titleText);
+    const titleX = (pageWidth - titleWidth) / 2;
+    doc.text(titleText, titleX, y + 25); // Aligned with logo baseline
     
-    y += logoHeight + 15;
+    y += 50; // More vertical spacing
     
-    // Horizontal line
-    doc.setLineWidth(1.5);
-    doc.setDrawColor(...brandBlue);
+    // Thin gray separator line
+    const separatorGray: [number, number, number] = [200, 200, 200];
+    doc.setLineWidth(0.5);
+    doc.setDrawColor(...separatorGray);
     doc.line(margin, y, pageWidth - margin, y);
     y += 20;
     

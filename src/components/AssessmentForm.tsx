@@ -759,20 +759,26 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       y += notesLines.length * 11 + 15;
     }
 
-    // Reference at the bottom (ALWAYS SHOWS regardless of score)
-    const footerY = pageHeight - margin - 25;
+    // FOOTER SECTION - Reference at absolute bottom position of page
+    const footerY = pageHeight - 40;
 
+    // Add a separator line above footer
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(margin, footerY - 10, pageWidth - margin, footerY - 10);
+
+    // Reference text
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(...darkGray);
     const referenceText =
       "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
-    const refLines = doc.splitTextToSize(referenceText, contentWidth);
-    doc.text(refLines, margin, footerY);
+    doc.text(referenceText, margin, footerY);
 
     // Add clickable link
     doc.setTextColor(...brandBlue);
-    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, footerY + 12, {
+    doc.setFontSize(8);
+    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, footerY + 10, {
       url: "https://www.mdpi.com/2072-6643/14/13/2683",
     });
 

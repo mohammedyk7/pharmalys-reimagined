@@ -293,11 +293,10 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     doc.text(purposeLines, margin, y);
     y += purposeLines.length * 11 + 15;
     
-    // Disclaimer Section - text in red
-    y = drawSectionHeader('Disclaimer', y);
+    // Disclaimer Section - text in red (no header)
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    doc.setTextColor(...red); // Red text for disclaimer content
+    doc.setTextColor(...red);
     const disclaimerText = 'This tool is not intended for infants with severe and life-threatening symptoms clearly indicating CMA, including anaphylaxis, which requires urgent referral. Infants presenting with failure to thrive and sick infants with hematochezia require urgent referral and full diagnostic work up.';
     const disclaimerLines = doc.splitTextToSize(disclaimerText, contentWidth);
     doc.text(disclaimerLines, margin, y);
@@ -533,17 +532,12 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       y += notesLines.length * 11 + 15;
     }
     
-    // Bottom disclaimer (Footer) - white background, "Disclaimer:" in red, text in black, justified
+    // Bottom disclaimer (Footer) - white background, text in black, justified (no "Disclaimer:" label)
     const footerY = pageHeight - margin - 45;
     
     // White background for footer
     doc.setFillColor(255, 255, 255);
     doc.rect(margin - 10, footerY - 10, contentWidth + 20, 50, 'F');
-    
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...red);
-    doc.text('Disclaimer:', margin, footerY);
     
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
@@ -551,7 +545,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     
     const footerText = 'CoMiSS® scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge. Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow\'s milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.';
     const footerLines = doc.splitTextToSize(footerText, contentWidth);
-    doc.text(footerLines, margin, footerY + 10, { align: 'justify', maxWidth: contentWidth });
+    doc.text(footerLines, margin, footerY, { align: 'justify', maxWidth: contentWidth });
     
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, '_')}_${date}.pdf`);

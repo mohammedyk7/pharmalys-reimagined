@@ -778,6 +778,23 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       y += notesLines.length * 11 + 15;
     }
 
+    // Reference at footer - ALWAYS SHOWS
+    const footerY = pageHeight - 40;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(...darkGray);
+    const footerRefText =
+      "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
+    doc.text(footerRefText, margin, footerY);
+
+    // Add clickable link
+    doc.setTextColor(...brandBlue);
+    doc.setFontSize(8);
+    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, footerY + 10, {
+      url: "https://www.mdpi.com/2072-6643/14/13/2683",
+    });
+
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, "_")}_${date}.pdf`);
     toast.success("PDF exported successfully");

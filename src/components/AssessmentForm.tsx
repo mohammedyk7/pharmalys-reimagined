@@ -745,24 +745,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       const productText = "Confirmed Cow's milk allergy cases, consider Primalac ULTIMA CMA (0-12 months)";
       const productLines = doc.splitTextToSize(productText, contentWidth - 40);
       doc.text(productLines, pageWidth / 2, y, { align: "center" });
-      y += productLines.length * 12 + 15;
-
-      // Reference under product text
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.setTextColor(...darkGray);
-      const referenceText =
-        "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
-      const refLines = doc.splitTextToSize(referenceText, contentWidth - 40);
-      doc.text(refLines, pageWidth / 2, y, { align: "center" });
-      y += refLines.length * 10 + 8;
-
-      // Add clickable link
-      doc.setTextColor(...brandBlue);
-      doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", pageWidth / 2 - 70, y, {
-        url: "https://www.mdpi.com/2072-6643/14/13/2683",
-      });
-      y += 30;
+      y += productLines.length * 12 + 30;
     }
 
     // Notes section if present
@@ -775,6 +758,23 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.text(notesLines, margin, y);
       y += notesLines.length * 11 + 15;
     }
+
+    // Reference at the bottom (ALWAYS SHOWS regardless of score)
+    const footerY = pageHeight - margin - 25;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(...darkGray);
+    const referenceText =
+      "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
+    const refLines = doc.splitTextToSize(referenceText, contentWidth);
+    doc.text(refLines, margin, footerY);
+
+    // Add clickable link
+    doc.setTextColor(...brandBlue);
+    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, footerY + 12, {
+      url: "https://www.mdpi.com/2072-6643/14/13/2683",
+    });
 
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, "_")}_${date}.pdf`);

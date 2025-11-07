@@ -722,51 +722,58 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     doc.text(interpretation, margin, y);
     y += 20;
 
-    // Interpretation guide with yellow highlight
-    doc.setFont("helvetica", "italic");
-    doc.setFontSize(8);
-    doc.setTextColor(...black);
+    // Skip the highlighted guides - removed as per user request
+    y += 10;
 
-    const guide1 =
-      "(Total score greater than or equal to 10): May be suggestive of cow's milk-related symptoms and could potentially be CMA.";
-    const guideLines1 = doc.splitTextToSize(guide1, contentWidth);
-    doc.setFillColor(...highlightYellow);
-    doc.rect(margin - 5, y - 8, contentWidth + 10, guideLines1.length * 10 + 4, "F");
-    doc.text(guideLines1, margin, y);
-    y += guideLines1.length * 10 + 8;
-
-    const guide2 = "(Total score less than 6): Symptoms are not likely to be related to CMA. Look for other causes.";
-    const guideLines2 = doc.splitTextToSize(guide2, contentWidth);
-    doc.setFillColor(...highlightYellow);
-    doc.rect(margin - 5, y - 8, contentWidth + 10, guideLines2.length * 10 + 4, "F");
-    doc.text(guideLines2, margin, y);
-    y += guideLines2.length * 10 + 20;
-
-    // Product Recommendation (only for scores >= 10)
+    // Product Recommendation (only for scores >= 10) - PROFESSIONAL DESIGN
     if (totalScore >= 10) {
       y = drawSectionHeader("Recommended Product", y);
 
-      const boxHeight = 200;
-      doc.setFillColor(220, 220, 220);
-      doc.rect(margin - 10, y - 10, contentWidth + 20, boxHeight, "F");
+      // Professional card-style design with shadow effect
+      const cardHeight = 220;
+      const cardPadding = 20;
 
-      const innerBoxWidth = 160;
-      const innerBoxHeight = 160;
+      // Light gray background for card
+      doc.setFillColor(245, 245, 245);
+      doc.roundedRect(margin - 10, y - 10, contentWidth + 20, cardHeight, 3, 3, "F");
+
+      // White inner container with subtle shadow
+      const innerBoxWidth = 180;
+      const innerBoxHeight = 180;
       const innerBoxX = (pageWidth - innerBoxWidth) / 2;
+      const innerBoxY = y + 5;
+
+      // Shadow effect
+      doc.setFillColor(230, 230, 230);
+      doc.roundedRect(innerBoxX + 2, innerBoxY + 2, innerBoxWidth, innerBoxHeight, 5, 5, "F");
+
+      // White box for image
       doc.setFillColor(255, 255, 255);
-      doc.rect(innerBoxX, y + 5, innerBoxWidth, innerBoxHeight, "F");
+      doc.roundedRect(innerBoxX, innerBoxY, innerBoxWidth, innerBoxHeight, 5, 5, "F");
 
-      const imgWidth = 120;
-      const imgHeight = 120;
-      doc.addImage(primalacImage, "PNG", (pageWidth - imgWidth) / 2, y + 25, imgWidth, imgHeight);
+      // Image centered in white box with padding
+      const imgWidth = 140;
+      const imgHeight = 140;
+      const imgX = (pageWidth - imgWidth) / 2;
+      const imgY = innerBoxY + (innerBoxHeight - imgHeight) / 2;
+      doc.addImage(primalacImage, "PNG", imgX, imgY, imgWidth, imgHeight);
 
-      y += innerBoxHeight + 20;
+      y += innerBoxHeight + 25;
+
+      // Product description with better typography
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(...brandBlue);
+      const productTitle = "Primalac ULTIMA CMA";
+      doc.text(productTitle, pageWidth / 2, y, { align: "center" });
+      y += 15;
+
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      doc.setTextColor(...black);
-      const productText = "For moderate to high CMPA scores, consider Primalac ULTIMA CMA (0-12 months)";
-      doc.text(productText, pageWidth / 2, y, { align: "center" });
-      y += 40;
+      doc.setFontSize(9);
+      doc.setTextColor(...darkGray);
+      const productDesc = "For infants 0-12 months with moderate to high CMPA scores";
+      doc.text(productDesc, pageWidth / 2, y, { align: "center" });
+      y += 30;
     }
 
     // Notes section if present

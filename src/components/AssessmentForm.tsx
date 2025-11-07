@@ -725,21 +725,12 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     // Skip the highlighted guides - removed as per user request
     y += 10;
 
-    // Product Recommendation (only for scores >= 10) - WHITE BACKGROUND DESIGN
+    // Product Recommendation (only for scores >= 10) - NO BORDER
     if (totalScore >= 10) {
       y = drawSectionHeader("Recommended Product", y);
 
-      // White background card
+      // No background, no border - just content
       const cardHeight = 200;
-
-      // White background for entire section
-      doc.setFillColor(255, 255, 255);
-      doc.rect(margin - 10, y - 10, contentWidth + 20, cardHeight, "F");
-
-      // Add a subtle border
-      doc.setDrawColor(220, 220, 220);
-      doc.setLineWidth(1);
-      doc.rect(margin - 10, y - 10, contentWidth + 20, cardHeight, "S");
 
       // Image centered with padding
       const imgWidth = 140;
@@ -749,6 +740,24 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.addImage(primalacImage, "PNG", imgX, imgY, imgWidth, imgHeight);
 
       y += imgHeight + 20;
+
+      // Reference text above product description
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(...darkGray);
+      const referenceText =
+        "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
+      const refLines = doc.splitTextToSize(referenceText, contentWidth - 40);
+      doc.text(refLines, pageWidth / 2, y, { align: "center" });
+      y += refLines.length * 10 + 5;
+
+      // Add clickable link
+      doc.setTextColor(...brandBlue);
+      doc.setFontSize(8);
+      doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", pageWidth / 2 - 70, y, {
+        url: "https://www.mdpi.com/2072-6643/14/13/2683",
+      });
+      y += 15;
 
       // Product description text - RED COLOR
       doc.setFont("helvetica", "bold");
@@ -770,23 +779,6 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.text(notesLines, margin, y);
       y += notesLines.length * 11 + 15;
     }
-
-    // Reference at the bottom
-    const referenceY = pageHeight - margin - 25;
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...darkGray);
-
-    const referenceText =
-      "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
-    doc.text(referenceText, margin, referenceY);
-
-    // Add clickable link
-    doc.setTextColor(...brandBlue);
-    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, referenceY + 12, {
-      url: "https://www.mdpi.com/2072-6643/14/13/2683",
-    });
 
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, "_")}_${date}.pdf`);

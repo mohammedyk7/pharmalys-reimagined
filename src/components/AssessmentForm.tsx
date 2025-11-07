@@ -260,13 +260,16 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.text(value, x + 80, yPosition);
     };
     
-    // Start Y position with more spacing
-    let y = margin + 10;
+    // Start Y position with proper spacing
+    let y = margin;
     
-    // Pharmalys logo on top-left
-    const logoWidth = 45;
-    const logoHeight = 36;
-    doc.addImage(logo, 'PNG', margin, y, logoWidth, logoHeight);
+    // Pharmalys logo - centered above title
+    const logoWidth = 50;
+    const logoHeight = 40;
+    const logoX = (pageWidth - logoWidth) / 2;
+    doc.addImage(logo, 'PNG', logoX, y, logoWidth, logoHeight);
+    
+    y += logoHeight + 8; // Space between logo and title
     
     // Main title - bigger, bold, centered, darker blue (#1E3A8A)
     const darkerBlue: [number, number, number] = [30, 58, 138];
@@ -276,9 +279,9 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     const titleText = "CoMiSS®: Cow's Milk-related Symptom Score";
     const titleWidth = doc.getTextWidth(titleText);
     const titleX = (pageWidth - titleWidth) / 2;
-    doc.text(titleText, titleX, y + 25); // Aligned with logo baseline
+    doc.text(titleText, titleX, y);
     
-    y += 50; // More vertical spacing
+    y += 15; // More vertical spacing
     
     // Thin gray separator line
     const separatorGray: [number, number, number] = [200, 200, 200];

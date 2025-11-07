@@ -494,7 +494,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(...black);
-      doc.text(value, x + 80, yPosition);
+      doc.text(value, x + 120, yPosition); // Increased from 80 to 120 for better alignment
     };
 
     // Start Y position with proper spacing

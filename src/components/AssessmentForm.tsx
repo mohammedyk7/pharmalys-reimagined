@@ -547,23 +547,7 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       "This tool is not intended for infants with severe and life-threatening symptoms clearly indicating CMA, including anaphylaxis, which requires urgent referral. Infants presenting with failure to thrive and sick infants with hematochezia require urgent referral and full diagnostic work up.\n\nCoMiSS® scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge. Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow's milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.";
     const disclaimerLines = doc.splitTextToSize(disclaimerText, contentWidth);
     doc.text(disclaimerLines, margin, y);
-    y += disclaimerLines.length * 11 + 10;
-
-    // Reference under disclaimer
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(...darkGray);
-    const referenceText =
-      "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
-    doc.text(referenceText, margin, y);
-    y += 12;
-
-    // Add clickable link
-    doc.setTextColor(...brandBlue);
-    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, y, {
-      url: "https://www.mdpi.com/2072-6643/14/13/2683",
-    });
-    y += 20;
+    y += disclaimerLines.length * 11 + 15;
 
     // Patient Details Section
     y = drawSectionHeader("Patient Details", y);
@@ -774,6 +758,23 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       doc.text(notesLines, margin, y);
       y += notesLines.length * 11 + 15;
     }
+
+    // Reference at the FOOTER/BOTTOM of the page
+    const footerY = pageHeight - margin - 25;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(...darkGray);
+
+    const referenceText =
+      "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
+    doc.text(referenceText, margin, footerY);
+
+    // Add clickable link below
+    doc.setTextColor(...brandBlue);
+    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, footerY + 12, {
+      url: "https://www.mdpi.com/2072-6643/14/13/2683",
+    });
 
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, "_")}_${date}.pdf`);

@@ -538,13 +538,13 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     doc.text(purposeLines, margin, y);
     y += purposeLines.length * 11 + 15;
 
-    // Disclaimer Section - WITH HEADER, text in RED
+    // Disclaimer Section - WITH HEADER, text in RED - COMBINED DISCLAIMERS
     y = drawSectionHeader("Disclaimer", y);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(...red);
     const disclaimerText =
-      "This tool is not intended for infants with severe and life-threatening symptoms clearly indicating CMA, including anaphylaxis, which requires urgent referral. Infants presenting with failure to thrive and sick infants with hematochezia require urgent referral and full diagnostic work up.";
+      "This tool is not intended for infants with severe and life-threatening symptoms clearly indicating CMA, including anaphylaxis, which requires urgent referral. Infants presenting with failure to thrive and sick infants with hematochezia require urgent referral and full diagnostic work up.\n\nCoMiSS® scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge. Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow's milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.";
     const disclaimerLines = doc.splitTextToSize(disclaimerText, contentWidth);
     doc.text(disclaimerLines, margin, y);
     y += disclaimerLines.length * 11 + 15;
@@ -725,55 +725,39 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     // Skip the highlighted guides - removed as per user request
     y += 10;
 
-    // Product Recommendation (only for scores >= 10) - PROFESSIONAL DESIGN
+    // Product Recommendation (only for scores >= 10) - WHITE BACKGROUND DESIGN
     if (totalScore >= 10) {
       y = drawSectionHeader("Recommended Product", y);
 
-      // Professional card-style design with shadow effect
-      const cardHeight = 220;
-      const cardPadding = 20;
+      // White background card
+      const cardHeight = 200;
 
-      // Light gray background for card
-      doc.setFillColor(245, 245, 245);
-      doc.roundedRect(margin - 10, y - 10, contentWidth + 20, cardHeight, 3, 3, "F");
-
-      // White inner container with subtle shadow
-      const innerBoxWidth = 180;
-      const innerBoxHeight = 180;
-      const innerBoxX = (pageWidth - innerBoxWidth) / 2;
-      const innerBoxY = y + 5;
-
-      // Shadow effect
-      doc.setFillColor(230, 230, 230);
-      doc.roundedRect(innerBoxX + 2, innerBoxY + 2, innerBoxWidth, innerBoxHeight, 5, 5, "F");
-
-      // White box for image
+      // White background for entire section
       doc.setFillColor(255, 255, 255);
-      doc.roundedRect(innerBoxX, innerBoxY, innerBoxWidth, innerBoxHeight, 5, 5, "F");
+      doc.rect(margin - 10, y - 10, contentWidth + 20, cardHeight, "F");
 
-      // Image centered in white box with padding
+      // Add a subtle border
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(1);
+      doc.rect(margin - 10, y - 10, contentWidth + 20, cardHeight, "S");
+
+      // Image centered with padding
       const imgWidth = 140;
       const imgHeight = 140;
       const imgX = (pageWidth - imgWidth) / 2;
-      const imgY = innerBoxY + (innerBoxHeight - imgHeight) / 2;
+      const imgY = y + 10;
       doc.addImage(primalacImage, "PNG", imgX, imgY, imgWidth, imgHeight);
 
-      y += innerBoxHeight + 25;
+      y += imgHeight + 20;
 
-      // Product description with better typography
+      // Product description text - RED COLOR
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(...brandBlue);
-      const productTitle = "Primalac ULTIMA CMA";
-      doc.text(productTitle, pageWidth / 2, y, { align: "center" });
-      y += 15;
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(...darkGray);
-      const productDesc = "For infants 0-12 months with moderate to high CMPA scores";
-      doc.text(productDesc, pageWidth / 2, y, { align: "center" });
-      y += 30;
+      doc.setFontSize(10);
+      doc.setTextColor(...red);
+      const productText = "Confirmed Cow's milk allergy cases, consider Primalac ULTIMA CMA (0-12 months)";
+      const productLines = doc.splitTextToSize(productText, contentWidth - 40);
+      doc.text(productLines, pageWidth / 2, y, { align: "center" });
+      y += productLines.length * 12 + 30;
     }
 
     // Notes section if present
@@ -787,20 +771,22 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       y += notesLines.length * 11 + 15;
     }
 
-    // Bottom disclaimer (Footer)
-    const footerY = pageHeight - margin - 45;
-
-    doc.setFillColor(255, 255, 255);
-    doc.rect(margin - 10, footerY - 10, contentWidth + 20, 50, "F");
+    // Reference at the bottom
+    const referenceY = pageHeight - margin - 25;
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
-    doc.setTextColor(...black);
+    doc.setTextColor(...darkGray);
 
-    const footerText =
-      "CoMiSS® scoring form is not intended to be used as a diagnostic tool and should not replace an oral food challenge. CMA diagnosis should be confirmed by a 2 to 4 week elimination diet followed by an oral food challenge. Worsening of eczema might be indicative of CMA. If urticaria/angioedema can be directly related to cow's milk (e.g., drinking milk in the absence of other food), this is strongly suggestive of CMA.";
-    const footerLines = doc.splitTextToSize(footerText, contentWidth);
-    doc.text(footerLines, margin, footerY, { align: "justify", maxWidth: contentWidth });
+    const referenceText =
+      "Reference: Vandenplas Y, et al. The Cow's Milk Related Symptom Score: The 2022 Update. Nutrients. 2022; 14(13):2683";
+    doc.text(referenceText, margin, referenceY);
+
+    // Add clickable link
+    doc.setTextColor(...brandBlue);
+    doc.textWithLink("https://www.mdpi.com/2072-6643/14/13/2683", margin, referenceY + 12, {
+      url: "https://www.mdpi.com/2072-6643/14/13/2683",
+    });
 
     // Save PDF
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, "_")}_${date}.pdf`);

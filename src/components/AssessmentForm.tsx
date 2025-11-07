@@ -738,14 +738,14 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
 
       y += imgHeight + 20;
 
-      // Product description text - RED COLOR
+      // Product description text - RED COLOR - with more spacing before footer
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(...red);
       const productText = "Confirmed Cow's milk allergy cases, consider Primalac ULTIMA CMA (0-12 months)";
       const productLines = doc.splitTextToSize(productText, contentWidth - 40);
       doc.text(productLines, pageWidth / 2, y, { align: "center" });
-      y += productLines.length * 12 + 30;
+      y += productLines.length * 12 + 80; // Increased spacing to avoid footer overlap
     }
 
     // Notes section if present

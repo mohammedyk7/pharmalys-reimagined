@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -80,14 +80,28 @@ const assessmentSchema = z.object({
   notes: z.string().trim().max(2000, "Notes must be less than 2000 characters").nullable(),
 });
 
-interface AssessmentFormProps {
-  userId?: string;
-}
-
-const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
+const AssessmentForm = () => {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Form state
   const [patientName, setPatientName] = useState("");
@@ -345,6 +359,12 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
   ];
 
   const handleSave = async () => {
+    // Check authentication first
+    if (!user) {
+      toast.error("You must be logged in to save assessments. Please sign in or create an account.");
+      return;
+    }
+
     // Basic consent validation
     if (!consent) {
       toast.error("Please accept the consent form");
@@ -360,11 +380,6 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     setSaving(true);
 
     try {
-      // Get current authenticated user (optional)
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
       // Prepare data for validation
       const formData = {
         patient_name: patientName,
@@ -387,9 +402,9 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
       // Validate using Zod schema
       const validatedData = assessmentSchema.parse(formData);
 
-      // Prepare insert data with all required fields
+      // Prepare insert data with all required fields - user_id is now required
       const insertData = {
-        user_id: user?.id || null,
+        user_id: user.id, // Required field, no longer nullable
         assessment_date: date,
         patient_name: validatedData.patient_name,
         patient_gender: validatedData.patient_gender,
@@ -782,6 +797,48 @@ const AssessmentForm = ({ userId }: AssessmentFormProps = {}) => {
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, "_")}_${date}.pdf`);
     toast.success("PDF exported successfully");
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <section id="app" className="py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <Card className="border-border bg-card">
+            <CardContent className="p-8 text-center">
+              <p className="text-muted-foreground">Loading...</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
+  }
+
+  // Show authentication required message
+  if (!user) {
+    return (
+      <section id="app" className="py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="text-2xl">Sign In Required</CardTitle>
+              <CardDescription>
+                You must be logged in to create and save assessment reports.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                Authentication is required to ensure your patient data is secure and accessible only to you. 
+                Please sign in or contact your administrator for access.
+              </p>
+              <Button onClick={() => window.location.href = '/signin'}>
+                Go to Sign In
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="app" className="py-16">

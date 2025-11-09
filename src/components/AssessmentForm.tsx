@@ -359,12 +359,6 @@ const AssessmentForm = () => {
   ];
 
   const handleSave = async () => {
-    // Check authentication first
-    if (!user) {
-      toast.error("You must be logged in to save assessments. Please sign in or create an account.");
-      return;
-    }
-
     // Basic consent validation
     if (!consent) {
       toast.error("Please accept the consent form");
@@ -380,6 +374,9 @@ const AssessmentForm = () => {
     setSaving(true);
 
     try {
+      const session = await supabase.auth.getSession();
+      const currentUser = session.data.session?.user;
+
       // Prepare data for validation
       const formData = {
         patient_name: patientName,
@@ -402,9 +399,9 @@ const AssessmentForm = () => {
       // Validate using Zod schema
       const validatedData = assessmentSchema.parse(formData);
 
-      // Prepare insert data with all required fields - user_id is now required
+      // Prepare insert data - user_id is optional for anonymous submissions
       const insertData = {
-        user_id: user.id, // Required field, no longer nullable
+        user_id: currentUser?.id || null,
         assessment_date: date,
         patient_name: validatedData.patient_name,
         patient_gender: validatedData.patient_gender,

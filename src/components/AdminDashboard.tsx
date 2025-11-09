@@ -4,9 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Download } from "lucide-react";
 import * as XLSX from 'xlsx';
+import UserManagement from "./UserManagement";
 
 interface Assessment {
   id: string;
@@ -115,115 +117,128 @@ const AdminDashboard = () => {
         <p className="text-muted-foreground">View and analyze all CoMiSS assessments</p>
       </div>
 
-      <div className="grid md:grid-cols-5 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Total Assessments</CardDescription>
-            <CardTitle className="text-3xl">{stats.total}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Mild (≤5)</CardDescription>
-            <CardTitle className="text-3xl text-green-600">{stats.mild}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Moderate (6-11)</CardDescription>
-            <CardTitle className="text-3xl text-yellow-600">{stats.moderate}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Severe (≥12)</CardDescription>
-            <CardTitle className="text-3xl text-red-600">{stats.severe}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardDescription>Average Score</CardDescription>
-            <CardTitle className="text-3xl">{stats.avgScore}</CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
+      <Tabs defaultValue="assessments" className="w-full">
+        <TabsList>
+          <TabsTrigger value="assessments">Assessments</TabsTrigger>
+          <TabsTrigger value="users">User Management</TabsTrigger>
+        </TabsList>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>All Assessments</CardTitle>
-              <CardDescription>Complete list of patient assessments</CardDescription>
-            </div>
-            <Button onClick={exportToExcel} variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export to Excel
-            </Button>
+        <TabsContent value="assessments" className="space-y-6">
+          <div className="grid md:grid-cols-5 gap-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Total Assessments</CardDescription>
+                <CardTitle className="text-3xl">{stats.total}</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Mild (≤5)</CardDescription>
+                <CardTitle className="text-3xl text-green-600">{stats.mild}</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Moderate (6-11)</CardDescription>
+                <CardTitle className="text-3xl text-yellow-600">{stats.moderate}</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Severe (≥12)</CardDescription>
+                <CardTitle className="text-3xl text-red-600">{stats.severe}</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Average Score</CardDescription>
+                <CardTitle className="text-3xl">{stats.avgScore}</CardTitle>
+              </CardHeader>
+            </Card>
           </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Patient</TableHead>
-                <TableHead>Age (months)</TableHead>
-                <TableHead>Gender</TableHead>
-                <TableHead>Guardian</TableHead>
-                <TableHead>Guardian Phone</TableHead>
-                <TableHead>Clinician</TableHead>
-                <TableHead>Hospital/Clinic</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead className="text-center">Crying</TableHead>
-                <TableHead className="text-center">Regurgitation</TableHead>
-                <TableHead className="text-center">Stool</TableHead>
-                <TableHead className="text-center">Skin (Head)</TableHead>
-                <TableHead className="text-center">Skin (Arms)</TableHead>
-                <TableHead className="text-center">Urticaria</TableHead>
-                <TableHead className="text-center">Respiratory</TableHead>
-                <TableHead className="text-center">Total Score</TableHead>
-                <TableHead>Notes</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {assessments.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={20} className="text-center text-muted-foreground">
-                    No assessments found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                assessments.map((assessment) => (
-                  <TableRow key={assessment.id}>
-                    <TableCell>{new Date(assessment.assessment_date).toLocaleDateString()}</TableCell>
-                    <TableCell className="font-medium">{assessment.patient_name}</TableCell>
-                    <TableCell>{assessment.patient_age_months}</TableCell>
-                    <TableCell>{assessment.patient_gender}</TableCell>
-                    <TableCell>{assessment.guardian_name}</TableCell>
-                    <TableCell>{assessment.guardian_phone || '-'}</TableCell>
-                    <TableCell>{assessment.clinician_name}</TableCell>
-                    <TableCell>{assessment.hospital_clinic}</TableCell>
-                    <TableCell>{assessment.location || '-'}</TableCell>
-                    <TableCell>{assessment.city || '-'}</TableCell>
-                    <TableCell>{assessment.country || '-'}</TableCell>
-                    <TableCell className="text-center">{assessment.crying_score}</TableCell>
-                    <TableCell className="text-center">{assessment.regurgitation_score}</TableCell>
-                    <TableCell className="text-center">{assessment.stool_score}</TableCell>
-                    <TableCell className="text-center">{assessment.skin_head_neck_trunk_score || 0}</TableCell>
-                    <TableCell className="text-center">{assessment.skin_arms_hands_legs_feet_score || 0}</TableCell>
-                    <TableCell className="text-center">{assessment.urticaria_present ? 6 : 0}</TableCell>
-                    <TableCell className="text-center">{assessment.respiratory_score}</TableCell>
-                    <TableCell className="text-center font-bold">{assessment.total_score}</TableCell>
-                    <TableCell className="text-sm max-w-xs truncate">{assessment.notes || '-'}</TableCell>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>All Assessments</CardTitle>
+                  <CardDescription>Complete list of patient assessments</CardDescription>
+                </div>
+                <Button onClick={exportToExcel} variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export to Excel
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Patient</TableHead>
+                    <TableHead>Age (months)</TableHead>
+                    <TableHead>Gender</TableHead>
+                    <TableHead>Guardian</TableHead>
+                    <TableHead>Guardian Phone</TableHead>
+                    <TableHead>Clinician</TableHead>
+                    <TableHead>Hospital/Clinic</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>City</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead className="text-center">Crying</TableHead>
+                    <TableHead className="text-center">Regurgitation</TableHead>
+                    <TableHead className="text-center">Stool</TableHead>
+                    <TableHead className="text-center">Skin (Head)</TableHead>
+                    <TableHead className="text-center">Skin (Arms)</TableHead>
+                    <TableHead className="text-center">Urticaria</TableHead>
+                    <TableHead className="text-center">Respiratory</TableHead>
+                    <TableHead className="text-center">Total Score</TableHead>
+                    <TableHead>Notes</TableHead>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {assessments.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={20} className="text-center text-muted-foreground">
+                        No assessments found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    assessments.map((assessment) => (
+                      <TableRow key={assessment.id}>
+                        <TableCell>{new Date(assessment.assessment_date).toLocaleDateString()}</TableCell>
+                        <TableCell className="font-medium">{assessment.patient_name}</TableCell>
+                        <TableCell>{assessment.patient_age_months}</TableCell>
+                        <TableCell>{assessment.patient_gender}</TableCell>
+                        <TableCell>{assessment.guardian_name}</TableCell>
+                        <TableCell>{assessment.guardian_phone || '-'}</TableCell>
+                        <TableCell>{assessment.clinician_name}</TableCell>
+                        <TableCell>{assessment.hospital_clinic}</TableCell>
+                        <TableCell>{assessment.location || '-'}</TableCell>
+                        <TableCell>{assessment.city || '-'}</TableCell>
+                        <TableCell>{assessment.country || '-'}</TableCell>
+                        <TableCell className="text-center">{assessment.crying_score}</TableCell>
+                        <TableCell className="text-center">{assessment.regurgitation_score}</TableCell>
+                        <TableCell className="text-center">{assessment.stool_score}</TableCell>
+                        <TableCell className="text-center">{assessment.skin_head_neck_trunk_score || 0}</TableCell>
+                        <TableCell className="text-center">{assessment.skin_arms_hands_legs_feet_score || 0}</TableCell>
+                        <TableCell className="text-center">{assessment.urticaria_present ? 6 : 0}</TableCell>
+                        <TableCell className="text-center">{assessment.respiratory_score}</TableCell>
+                        <TableCell className="text-center font-bold">{assessment.total_score}</TableCell>
+                        <TableCell className="text-sm max-w-xs truncate">{assessment.notes || '-'}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="users">
+          <UserManagement />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

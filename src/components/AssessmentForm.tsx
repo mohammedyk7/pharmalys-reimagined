@@ -84,7 +84,28 @@ const AssessmentForm = () => {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+    checkAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Form state
   const [patientName, setPatientName] = useState("");
@@ -357,6 +378,9 @@ const AssessmentForm = () => {
     setSaving(true);
 
     try {
+      const session = await supabase.auth.getSession();
+      const currentUser = session.data.session?.user;
+
       // Prepare data for validation
       const formData = {
         patient_name: patientName,
@@ -379,9 +403,9 @@ const AssessmentForm = () => {
       // Validate using Zod schema
       const validatedData = assessmentSchema.parse(formData);
 
-      // Prepare insert data - user_id is null for anonymous submissions
+      // Prepare insert data - user_id is optional for anonymous submissions
       const insertData = {
-        user_id: null,
+        user_id: currentUser?.id || null,
         assessment_date: date,
         patient_name: validatedData.patient_name,
         patient_gender: validatedData.patient_gender,
@@ -774,6 +798,44 @@ const AssessmentForm = () => {
     doc.save(`CoMiSS_Assessment_${patientName.replace(/\s+/g, "_")}_${date}.pdf`);
     toast.success("PDF exported successfully");
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <section id="app" className="py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <Card className="border-border bg-card">
+            <CardContent className="p-8 text-center">
+              <p className="text-muted-foreground">Loading...</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
+  }
+
+  // Show authentication required message
+  if (!user) {
+    return (
+      <section id="app" className="py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="text-2xl">Sign In Required</CardTitle>
+              <CardDescription>You must be logged in to create and save assessment reports.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                Authentication is required to ensure your patient data is secure and accessible only to you. Please sign
+                in or contact your administrator for access.
+              </p>
+              <Button onClick={() => (window.location.href = "/signin")}>Go to Sign In</Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="app" className="py-16">

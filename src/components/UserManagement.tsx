@@ -3,9 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Shield, ShieldOff, Loader2 } from "lucide-react";
+import { Shield, ShieldOff, Loader2, UserPlus } from "lucide-react";
 
 interface UserProfile {
   id: string;
@@ -27,6 +30,11 @@ const UserManagement = () => {
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [newAdminPassword, setNewAdminPassword] = useState("");
+  const [newAdminFullName, setNewAdminFullName] = useState("");
+  const [creating, setCreating] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -101,6 +109,49 @@ const UserManagement = () => {
     }
   };
 
+  const handleCreateAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+
+    try {
+      // Create new user account
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: newAdminEmail,
+        password: newAdminPassword,
+        options: {
+          data: {
+            full_name: newAdminFullName,
+          },
+        },
+      });
+
+      if (signUpError) throw signUpError;
+      if (!authData.user) throw new Error("Failed to create user");
+
+      // Note: The user profile and default 'user' role are created automatically by the trigger
+      // We need to add the admin role
+      const { error: roleError } = await supabase
+        .from("user_roles")
+        .insert({ user_id: authData.user.id, role: "admin" });
+
+      if (roleError) throw roleError;
+
+      toast.success("Admin user created successfully");
+      setDialogOpen(false);
+      setNewAdminEmail("");
+      setNewAdminPassword("");
+      setNewAdminFullName("");
+      
+      // Refresh users list
+      await fetchUsers();
+    } catch (error: any) {
+      console.error("Error creating admin:", error);
+      toast.error(error.message || "Failed to create admin user");
+    } finally {
+      setCreating(false);
+    }
+  };
+
   if (loading) {
     return (
       <Card>
@@ -120,8 +171,85 @@ const UserManagement = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>User Management</CardTitle>
-        <CardDescription>Manage user roles and permissions</CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>User Management</CardTitle>
+            <CardDescription>Manage user roles and permissions</CardDescription>
+          </div>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add Admin
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <form onSubmit={handleCreateAdmin}>
+                <DialogHeader>
+                  <DialogTitle>Create New Admin User</DialogTitle>
+                  <DialogDescription>
+                    Add a new user with admin privileges
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullname">Full Name</Label>
+                    <Input
+                      id="fullname"
+                      placeholder="Dr. John Doe"
+                      value={newAdminFullName}
+                      onChange={(e) => setNewAdminFullName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="admin@example.com"
+                      value={newAdminEmail}
+                      onChange={(e) => setNewAdminEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Minimum 6 characters"
+                      value={newAdminPassword}
+                      onChange={(e) => setNewAdminPassword(e.target.value)}
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                    disabled={creating}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={creating}>
+                    {creating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      "Create Admin"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </CardHeader>
       <CardContent>
         {users.length === 0 ? (

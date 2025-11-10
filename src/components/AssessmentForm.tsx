@@ -356,9 +356,6 @@ const AssessmentForm = () => {
     setSaving(true);
 
     try {
-      const session = await supabase.auth.getSession();
-      const currentUser = session.data.session?.user;
-
       // Prepare data for validation
       const formData = {
         patient_name: patientName,
@@ -381,9 +378,8 @@ const AssessmentForm = () => {
       // Validate using Zod schema
       const validatedData = assessmentSchema.parse(formData);
 
-      // Prepare insert data - user_id is optional for anonymous submissions
+      // Prepare insert data - no user_id for anonymous submissions
       const insertData = {
-        user_id: currentUser?.id || null,
         assessment_date: date,
         patient_name: validatedData.patient_name,
         patient_gender: validatedData.patient_gender,

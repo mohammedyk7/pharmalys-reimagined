@@ -17,8 +17,8 @@ const Footer = () => {
           </Button>
         </div>
         <p className="text-sm text-muted-foreground text-center max-w-4xl mx-auto leading-relaxed">
-          CoMiSS®️ (Cow's Milk-related Symptom Score) is a registered trademark of its respective owner. 
-          This digital tool is independently developed by Pharmalys Laboratories to facilitate the use of the publicly available CoMiSS®️ scoring system. 
+          CoMiSS® (Cow's Milk-related Symptom Score) is a registered trademark of its respective owner. 
+          This digital tool is independently developed by Pharmalys Laboratories to facilitate the use of the publicly available CoMiSS® scoring system. 
           Pharmalys Laboratories is not affiliated with, endorsed by, or representing the trademark owner.
         </p>
       </div>

@@ -17,40 +17,13 @@ import { z } from "zod";
 
 // Comprehensive validation schema for assessment form
 const assessmentSchema = z.object({
-  patient_name: z
-    .string()
-    .trim()
-    .min(1, "Patient name is required")
-    .max(100, "Patient name must be less than 100 characters"),
   patient_gender: z.enum(["Male", "Female"], { errorMap: () => ({ message: "Gender must be Male or Female" }) }),
   patient_age_months: z
     .number()
     .int("Age must be a whole number")
     .min(0, "Age cannot be negative")
     .max(240, "Age must be less than 240 months (20 years)"),
-  guardian_name: z
-    .string()
-    .trim()
-    .min(1, "Guardian name is required")
-    .max(100, "Guardian name must be less than 100 characters"),
-  guardian_phone: z
-    .string()
-    .trim()
-    .regex(
-      /^[\+]?[0-9\s\-\(\)]{7,20}$/,
-      "Phone number must be valid (7-20 characters, numbers, spaces, dashes, parentheses allowed)",
-    ),
-  clinician_name: z
-    .string()
-    .trim()
-    .min(1, "Clinician name is required")
-    .max(100, "Clinician name must be less than 100 characters"),
-  hospital_clinic: z
-    .string()
-    .trim()
-    .min(1, "Hospital/clinic is required")
-    .max(200, "Hospital/clinic name must be less than 200 characters"),
-  country: z.string().trim().max(100, "Country must be less than 100 characters").nullable(),
+  country: z.string().trim().min(1, "Country is required").max(100, "Country must be less than 100 characters"),
   city: z.string().trim().max(100, "City must be less than 100 characters").nullable(),
   crying_score: z
     .number()
@@ -77,6 +50,17 @@ const assessmentSchema = z.object({
     .int("Score must be a whole number")
     .min(0, "Score cannot be negative")
     .max(3, "Respiratory score maximum is 3"),
+  urticaria_score: z
+    .number()
+    .int("Score must be a whole number")
+    .min(0, "Score cannot be negative")
+    .max(6, "Urticaria score maximum is 6"),
+  // Optional fields
+  patient_name: z.string().trim().max(100, "Patient name must be less than 100 characters").nullable(),
+  guardian_name: z.string().trim().max(100, "Guardian name must be less than 100 characters").nullable(),
+  guardian_phone: z.string().trim().max(20, "Phone number must be less than 20 characters").nullable(),
+  clinician_name: z.string().trim().max(100, "Clinician name must be less than 100 characters").nullable(),
+  hospital_clinic: z.string().trim().max(200, "Hospital/clinic name must be less than 200 characters").nullable(),
   notes: z.string().trim().max(2000, "Notes must be less than 2000 characters").nullable(),
 });
 
@@ -101,7 +85,7 @@ const AssessmentForm = () => {
   const [stoolScore, setStoolScore] = useState("");
   const [skinHeadScore, setSkinHeadScore] = useState("");
   const [skinArmsScore, setSkinArmsScore] = useState("");
-  const [urticariaPresent, setUrticariaPresent] = useState(false);
+  const [urticariaScore, setUrticariaScore] = useState("");
   const [respiratoryScore, setRespiratoryScore] = useState("");
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
@@ -112,6 +96,7 @@ const AssessmentForm = () => {
     (parseInt(stoolScore) || 0) +
     (parseInt(skinHeadScore) || 0) +
     (parseInt(skinArmsScore) || 0) +
+    (parseInt(urticariaScore) || 0) +
     (parseInt(respiratoryScore) || 0);
   const maxScore = 33;
 
@@ -348,8 +333,8 @@ const AssessmentForm = () => {
     }
 
     // Validate all required symptom fields are selected
-    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !respiratoryScore) {
-      toast.error("Please select all symptom scores before saving");
+    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country) {
+      toast.error("Please fill in all required fields before saving");
       return;
     }
 
@@ -358,20 +343,21 @@ const AssessmentForm = () => {
     try {
       // Prepare data for validation
       const formData = {
-        patient_name: patientName,
+        patient_name: patientName || null,
         patient_gender: gender,
         patient_age_months: parseInt(age) || 0,
-        guardian_name: guardianName,
-        guardian_phone: guardianPhone,
-        clinician_name: clinicianName,
-        hospital_clinic: hospital,
-        country: country || null,
+        guardian_name: guardianName || null,
+        guardian_phone: guardianPhone || null,
+        clinician_name: clinicianName || null,
+        hospital_clinic: hospital || null,
+        country: country,
         city: city || null,
         crying_score: parseInt(cryingScore),
         regurgitation_score: parseInt(regurgitationScore),
         stool_score: parseInt(stoolScore),
         skin_score: parseInt(skinHeadScore) + parseInt(skinArmsScore),
         respiratory_score: parseInt(respiratoryScore),
+        urticaria_score: parseInt(urticariaScore),
         notes: notes || null,
       };
 
@@ -396,7 +382,8 @@ const AssessmentForm = () => {
         skin_score: validatedData.skin_score,
         skin_head_neck_trunk_score: parseInt(skinHeadScore) || 0,
         skin_arms_hands_legs_feet_score: parseInt(skinArmsScore) || 0,
-        urticaria_present: urticariaPresent,
+        urticaria_present: parseInt(urticariaScore) === 6,
+        urticaria_score: validatedData.urticaria_score,
         respiratory_score: validatedData.respiratory_score,
         notes: validatedData.notes,
       };
@@ -439,6 +426,7 @@ const AssessmentForm = () => {
       parseInt(stoolScore) +
       parseInt(skinHeadScore) +
       parseInt(skinArmsScore) +
+      parseInt(urticariaScore) +
       parseInt(respiratoryScore);
 
     const doc = new jsPDF({
@@ -503,7 +491,7 @@ const AssessmentForm = () => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(22);
     doc.setTextColor(...darkerBlue);
-    const titleText = "CoMiSS®: Cow's Milk-related Symptom Score";
+    const titleText = "CoMiSS\u00AE: Cow's Milk-related Symptom Score";
     const titleWidth = doc.getTextWidth(titleText);
     const titleX = (pageWidth - titleWidth) / 2;
     doc.text(titleText, titleX, y);
@@ -589,19 +577,22 @@ const AssessmentForm = () => {
 
     const getRegurgitationDesc = (score: string) => {
       const descriptions: { [key: string]: string } = {
-        "0": "0-2 episodes of small volumes per day",
-        "1": "3+ episodes of small volumes per day",
-        "2": "3+ episodes of >half feed in <half feeds",
-        "3": "3+ episodes of >half feed in >half feeds",
+        "0": "0 to 2 episodes/day",
+        "1": "≥ 3 to ≤ 5 episodes of volume < 5ml",
+        "2": "> 5 episodes of > 3ml",
+        "3": "> 5 episodes of ± half of the feeds in < half of the feeds",
+        "4": "Continuous regurgitations of small volumes > 30 min after each feed",
+        "5": "Regurgitation of half to complete volume of a feed in at least half of the feeds",
+        "6": "Regurgitation of the complete feed after each feeding",
       };
       return descriptions[score] || "";
     };
 
     const getStoolDesc = (score: string) => {
       const descriptions: { [key: string]: string } = {
-        "0": "Normal stool (Type 1, 4)",
-        "3": "Abnormal stool (Type 2, 3)",
-        "6": "Abnormal stool (Type 5, 6)",
+        "0": "Type 1 and 4 (0)",
+        "3": "Type 2 and 3 (3)",
+        "6": "Type 5 and 6 (6)",
       };
       return descriptions[score] || "";
     };
@@ -678,7 +669,7 @@ const AssessmentForm = () => {
     doc.text("Urticaria:", margin, y);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...black);
-    doc.text(urticariaPresent ? "Yes" : "No", symptomValueX, y);
+    doc.text(parseInt(urticariaScore) === 6 ? "Present (+6)" : "Not present (0)", symptomValueX, y);
     y += 12;
 
     // Respiratory AFTER Urticaria
@@ -778,7 +769,7 @@ const AssessmentForm = () => {
       <div className="container mx-auto px-4 max-w-4xl">
         <Card className="border-border bg-card">
           <CardHeader>
-            <CardTitle className="text-2xl">CoMiSS Assessment</CardTitle>
+            <CardTitle className="text-2xl">CoMiSS® Assessment</CardTitle>
             <CardDescription>
               Fill the form and click <strong>Save</strong> to enable <strong>Export PDF</strong>.
             </CardDescription>
@@ -787,10 +778,10 @@ const AssessmentForm = () => {
             {/* Patient Details */}
             <div>
               <h3 className="text-lg font-semibold mb-4">Patient Details</h3>
-              <p className="text-sm text-muted-foreground mb-4">Required fields marked with *</p>
+              <p className="text-sm text-muted-foreground mb-4">Required fields marked with <span className="text-red-500">*</span></p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">Patient Name</Label>
                   <Input
                     id="name"
                     placeholder="Patient name"
@@ -799,7 +790,7 @@ const AssessmentForm = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="gender">Gender *</Label>
+                  <Label htmlFor="gender">Gender <span className="text-red-500">*</span></Label>
                   <Select value={gender} onValueChange={setGender}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select..." />
@@ -811,12 +802,12 @@ const AssessmentForm = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="age">Age (months) *</Label>
+                  <Label htmlFor="age">Age (months) <span className="text-red-500">*</span></Label>
                   <Input id="age" type="number" placeholder="0" value={age} onChange={(e) => setAge(e.target.value)} />
                   <p className="text-xs text-muted-foreground mt-1">Use exact months (round to nearest if needed).</p>
                 </div>
                 <div>
-                  <Label htmlFor="date">Date *</Label>
+                  <Label htmlFor="date">Date <span className="text-red-500">*</span></Label>
                   <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                   <p className="text-xs text-muted-foreground mt-1">Defaults to today.</p>
                 </div>
@@ -847,7 +838,7 @@ const AssessmentForm = () => {
             {/* Clinician Details */}
             <div>
               <h3 className="text-lg font-semibold mb-4">Clinician Details</h3>
-              <p className="text-sm text-muted-foreground mb-4">Optional information</p>
+              <p className="text-sm text-muted-foreground mb-4">Required fields marked with <span className="text-red-500">*</span></p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="clinician">Clinician&apos;s Name</Label>
@@ -869,7 +860,7 @@ const AssessmentForm = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="country">Country</Label>
+                  <Label htmlFor="country">Country <span className="text-red-500">*</span></Label>
                   <Select
                     value={country}
                     onValueChange={(value) => {
@@ -892,7 +883,7 @@ const AssessmentForm = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="city">City / Governorate</Label>
+                  <Label htmlFor="city">City / Governorate <span className="text-red-500">*</span></Label>
                   <Select value={city} onValueChange={setCity} disabled={country !== "Oman"}>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder={country === "Oman" ? "Select governorate" : "Select Oman first"} />
@@ -916,7 +907,7 @@ const AssessmentForm = () => {
 
             {/* Symptoms */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Symptoms *</h3>
+              <h3 className="text-lg font-semibold mb-2">Symptoms <span className="text-red-500">*</span></h3>
               <p className="text-sm text-muted-foreground mb-4">
                 All symptoms must be assessed - Assessed by parents without any obvious cause (≥1 week duration, no
                 infectious disease)
@@ -924,7 +915,7 @@ const AssessmentForm = () => {
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="crying">Crying</Label>
+                  <Label htmlFor="crying">Crying <span className="text-red-500">*</span></Label>
                   <p className="text-xs text-muted-foreground mb-2">Assessed by parents ≥ 1 week duration.</p>
                   <Select value={cryingScore || undefined} onValueChange={setCryingScore}>
                     <SelectTrigger>
@@ -943,27 +934,34 @@ const AssessmentForm = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="regurgitation">Regurgitation</Label>
+                  <Label htmlFor="regurgitation">Regurgitation <span className="text-red-500">*</span></Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
                   <Select value={regurgitationScore || undefined} onValueChange={setRegurgitationScore}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select regurgitation level" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">0–2 episodes of small volumes per day (0)</SelectItem>
-                      <SelectItem value="1">≥ 3 episodes of small volumes per day (1)</SelectItem>
-                      <SelectItem value="2">
-                        ≥ 3 episodes of &gt; half of the feed volume in &lt; half of feeds (2)
-                      </SelectItem>
+                      <SelectItem value="0">0 to 2 episodes/day (0)</SelectItem>
+                      <SelectItem value="1">≥ 3 to ≤ 5 episodes of volume &lt; 5ml (1)</SelectItem>
+                      <SelectItem value="2">&gt; 5 episodes of &gt; 3ml (2)</SelectItem>
                       <SelectItem value="3">
-                        ≥ 3 episodes of &gt; half of the feed volume in ≥ half of feeds (3)
+                        &gt; 5 episodes of ± half of the feeds in &lt; half of the feeds (3)
+                      </SelectItem>
+                      <SelectItem value="4">
+                        Continuous regurgitations of small volumes &gt; 30 min after each feed (4)
+                      </SelectItem>
+                      <SelectItem value="5">
+                        Regurgitation of half to complete volume of a feed in at least half of the feeds (5)
+                      </SelectItem>
+                      <SelectItem value="6">
+                        Regurgitation of the complete feed after each feeding (6)
                       </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <Label htmlFor="stool">Stools</Label>
+                  <Label htmlFor="stool">Stools <span className="text-red-500">*</span></Label>
                   <p className="text-xs text-muted-foreground mb-2">
                     Brussels Infant and Toddlers Stool Scale (BITSS).
                   </p>
@@ -986,7 +984,7 @@ const AssessmentForm = () => {
                   <div className="space-y-3">
                     <div>
                       <Label htmlFor="skin-head" className="text-sm font-normal">
-                        Head/Neck/Trunk
+                        Head/Neck/Trunk <span className="text-red-500">*</span>
                       </Label>
                       <Select value={skinHeadScore || undefined} onValueChange={setSkinHeadScore}>
                         <SelectTrigger>
@@ -1003,7 +1001,7 @@ const AssessmentForm = () => {
 
                     <div>
                       <Label htmlFor="skin-arms" className="text-sm font-normal">
-                        Arms/Hands/Legs/Feet
+                        Arms/Hands/Legs/Feet <span className="text-red-500">*</span>
                       </Label>
                       <Select value={skinArmsScore || undefined} onValueChange={setSkinArmsScore}>
                         <SelectTrigger>
@@ -1017,22 +1015,24 @@ const AssessmentForm = () => {
                         </SelectContent>
                       </Select>
                     </div>
-
-                    <div className="flex items-center space-x-2 pt-2">
-                      <Checkbox
-                        id="urticaria"
-                        checked={urticariaPresent}
-                        onCheckedChange={(checked) => setUrticariaPresent(checked === true)}
-                      />
-                      <Label htmlFor="urticaria" className="text-sm font-normal cursor-pointer">
-                        Urticaria present (+6)
-                      </Label>
-                    </div>
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="respiratory">Respiratory Symptoms</Label>
+                  <Label htmlFor="urticaria">Urticaria <span className="text-red-500">*</span></Label>
+                  <Select value={urticariaScore || undefined} onValueChange={setUrticariaScore}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select urticaria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Not present (0)</SelectItem>
+                      <SelectItem value="6">Present (+6)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="respiratory">Respiratory Symptoms <span className="text-red-500">*</span></Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
                   <Select value={respiratoryScore || undefined} onValueChange={setRespiratoryScore}>
                     <SelectTrigger>
@@ -1062,21 +1062,23 @@ const AssessmentForm = () => {
               />
             </div>
 
-            {/* Analysis Section */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  {totalScore} / {maxScore}
-                </span>
-                <div className="flex items-center gap-2">
+            {/* Analysis Section - Only shown after saving */}
+            {saved && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">
-                    {analysis.text} — {gender || "Patient"}
+                    {totalScore} / {maxScore}
                   </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">
+                      {analysis.text} — {gender || "Patient"}
+                    </span>
+                  </div>
                 </div>
+                <Progress value={(totalScore / maxScore) * 100} className="h-2" />
+                <p className="text-sm text-muted-foreground">{analysis.recommendation}</p>
               </div>
-              <Progress value={(totalScore / maxScore) * 100} className="h-2" />
-              <p className="text-sm text-muted-foreground">{analysis.recommendation}</p>
-            </div>
+            )}
 
             {/* Consent */}
             <div className="flex items-start gap-3">
@@ -1085,15 +1087,14 @@ const AssessmentForm = () => {
                 I consent to the collection and secure storage of the information entered in this form for the purpose
                 of scientific research. I understand that this information will be used only for clinical assessment and
                 will not be shared with third parties without the guardian&apos;s explicit permission, except where
-                required by law.
+                required by law. <span className="text-red-500">*</span>
               </label>
             </div>
 
             <Separator />
 
             {/* Action Buttons */}
-            <div className="flex gap-4 justify-between flex-wrap items-center">
-              <div className="text-sm font-medium">Total: {totalScore}</div>
+            <div className="flex gap-4 justify-end flex-wrap items-center">
               <div className="flex gap-4">
                 <Button onClick={handleSave} disabled={saved || saving}>
                   {saving ? "Saving..." : saved ? "Saved ✓" : "Save Assessment"}
@@ -1114,13 +1115,13 @@ const AssessmentForm = () => {
                     setHospital("");
                     setCountry("");
                     setCity("");
-                    setCryingScore("0");
-                    setRegurgitationScore("0");
-                    setStoolScore("0");
-                    setSkinHeadScore("0");
-                    setSkinArmsScore("0");
-                    setUrticariaPresent(false);
-                    setRespiratoryScore("0");
+                    setCryingScore("");
+                    setRegurgitationScore("");
+                    setStoolScore("");
+                    setSkinHeadScore("");
+                    setSkinArmsScore("");
+                    setUrticariaScore("");
+                    setRespiratoryScore("");
                     setNotes("");
                     setConsent(false);
                     setSaved(false);

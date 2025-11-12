@@ -16,53 +16,67 @@ import primalacImage from "@/assets/primalac-cma.png";
 import { z } from "zod";
 
 // Comprehensive validation schema for assessment form
-const assessmentSchema = z.object({
-  patient_gender: z.enum(["Male", "Female"], { errorMap: () => ({ message: "Gender must be Male or Female" }) }),
-  patient_age_months: z
-    .number()
-    .int("Age must be a whole number")
-    .min(0, "Age cannot be negative")
-    .max(240, "Age must be less than 240 months (20 years)"),
-  country: z.string().trim().min(1, "Country is required").max(100, "Country must be less than 100 characters"),
-  city: z.string().trim().max(100, "City must be less than 100 characters").optional().nullable(),
-  crying_score: z
-    .number()
-    .int("Score must be a whole number")
-    .min(0, "Score cannot be negative")
-    .max(6, "Crying score maximum is 6"),
-  regurgitation_score: z
-    .number()
-    .int("Score must be a whole number")
-    .min(0, "Score cannot be negative")
-    .max(6, "Regurgitation score maximum is 6"),
-  stool_score: z
-    .number()
-    .int("Score must be a whole number")
-    .min(0, "Score cannot be negative")
-    .max(6, "Stool score maximum is 6"),
-  skin_score: z
-    .number()
-    .int("Score must be a whole number")
-    .min(0, "Score cannot be negative")
-    .max(12, "Skin score maximum is 12"),
-  respiratory_score: z
-    .number()
-    .int("Score must be a whole number")
-    .min(0, "Score cannot be negative")
-    .max(3, "Respiratory score maximum is 3"),
-  urticaria_score: z
-    .number()
-    .int("Score must be a whole number")
-    .min(0, "Score cannot be negative")
-    .max(6, "Urticaria score maximum is 6"),
-  // Optional fields
-  patient_name: z.string().trim().max(100, "Patient name must be less than 100 characters").nullable(),
-  guardian_name: z.string().trim().max(100, "Guardian name must be less than 100 characters").nullable(),
-  guardian_phone: z.string().trim().max(20, "Phone number must be less than 20 characters").nullable(),
-  clinician_name: z.string().trim().max(100, "Clinician name must be less than 100 characters").nullable(),
-  hospital_clinic: z.string().trim().max(200, "Hospital/clinic name must be less than 200 characters").nullable(),
-  notes: z.string().trim().max(2000, "Notes must be less than 2000 characters").nullable(),
-});
+const assessmentSchema = z
+  .object({
+    patient_gender: z.enum(["Male", "Female"], { errorMap: () => ({ message: "Gender must be Male or Female" }) }),
+    patient_age_months: z
+      .number()
+      .int("Age must be a whole number")
+      .min(0, "Age cannot be negative")
+      .max(240, "Age must be less than 240 months (20 years)"),
+    country: z.string().trim().min(1, "Country is required").max(100, "Country must be less than 100 characters"),
+    city: z.string().trim().max(100, "City must be less than 100 characters").optional().nullable(),
+    crying_score: z
+      .number()
+      .int("Score must be a whole number")
+      .min(0, "Score cannot be negative")
+      .max(6, "Crying score maximum is 6"),
+    regurgitation_score: z
+      .number()
+      .int("Score must be a whole number")
+      .min(0, "Score cannot be negative")
+      .max(6, "Regurgitation score maximum is 6"),
+    stool_score: z
+      .number()
+      .int("Score must be a whole number")
+      .min(0, "Score cannot be negative")
+      .max(6, "Stool score maximum is 6"),
+    skin_score: z
+      .number()
+      .int("Score must be a whole number")
+      .min(0, "Score cannot be negative")
+      .max(12, "Skin score maximum is 12"),
+    respiratory_score: z
+      .number()
+      .int("Score must be a whole number")
+      .min(0, "Score cannot be negative")
+      .max(3, "Respiratory score maximum is 3"),
+    urticaria_score: z
+      .number()
+      .int("Score must be a whole number")
+      .min(0, "Score cannot be negative")
+      .max(6, "Urticaria score maximum is 6"),
+    // Optional fields
+    patient_name: z.string().trim().max(100, "Patient name must be less than 100 characters").nullable(),
+    guardian_name: z.string().trim().max(100, "Guardian name must be less than 100 characters").nullable(),
+    guardian_phone: z.string().trim().max(20, "Phone number must be less than 20 characters").nullable(),
+    clinician_name: z.string().trim().max(100, "Clinician name must be less than 100 characters").nullable(),
+    hospital_clinic: z.string().trim().max(200, "Hospital/clinic name must be less than 200 characters").nullable(),
+    notes: z.string().trim().max(2000, "Notes must be less than 2000 characters").nullable(),
+  })
+  .refine(
+    (data) => {
+      // If country is Oman, city must be provided
+      if (data.country === "Oman" && (!data.city || data.city.trim() === "")) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "City/Governorate is required when Oman is selected",
+      path: ["city"],
+    },
+  );
 
 const AssessmentForm = () => {
   const [saved, setSaved] = useState(false);
@@ -101,12 +115,15 @@ const AssessmentForm = () => {
   const maxScore = 33;
 
   const getAnalysis = () => {
-    if (totalScore <= 10) {
-      return { text: "Low likelihood of CMPA", recommendation: "Continue monitoring" };
-    } else if (totalScore <= 15) {
-      return { text: "Moderate likelihood of CMPA", recommendation: "Consider dietary changes" };
+    if (totalScore < 6) {
+      return { text: "Symptoms are not likely to be related to CMA", recommendation: "Look for other causes" };
+    } else if (totalScore >= 6 && totalScore <= 9) {
+      return { text: "More investigation is needed", recommendation: "Consider elimination diet and monitoring" };
     } else {
-      return { text: "High likelihood of CMPA", recommendation: "Consider referral" };
+      return {
+        text: "May be suggestive of cow's milk-related symptoms and could potentially be CMA",
+        recommendation: "Consider referral and elimination diet",
+      };
     }
   };
 
@@ -345,6 +362,12 @@ const AssessmentForm = () => {
       !country
     ) {
       toast.error("Please fill in all required fields before saving");
+      return;
+    }
+
+    // Validate city is required when Oman is selected
+    if (country === "Oman" && (!city || city.trim() === "")) {
+      toast.error("City/Governorate is required when Oman is selected");
       return;
     }
 
@@ -611,9 +634,9 @@ const AssessmentForm = () => {
     const getSkinDesc = (score: string) => {
       const descriptions: { [key: string]: string } = {
         "0": "Absent",
-        "2": "Mild",
-        "4": "Moderate",
-        "6": "Severe",
+        "1": "Mild",
+        "2": "Moderate",
+        "3": "Severe",
       };
       return descriptions[score] || "";
     };
@@ -925,7 +948,9 @@ const AssessmentForm = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="city">City / Governorate</Label>
+                  <Label htmlFor="city">
+                    City / Governorate {country === "Oman" && <span className="text-red-500">*</span>}
+                  </Label>
                   <Select value={city} onValueChange={setCity} disabled={saved || country !== "Oman"}>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder={country === "Oman" ? "Select governorate" : "Select Oman first"} />
@@ -939,7 +964,7 @@ const AssessmentForm = () => {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {country === "Oman" ? "Select your governorate" : "Only available when Oman is selected"}
+                    {country === "Oman" ? "Required - Select your governorate" : "Only available when Oman is selected"}
                   </p>
                 </div>
               </div>

@@ -94,13 +94,13 @@ const AssessmentForm = () => {
   const [hospital, setHospital] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
-  const [cryingScore, setCryingScore] = useState<string>("");
-  const [regurgitationScore, setRegurgitationScore] = useState<string>("");
-  const [stoolScore, setStoolScore] = useState<string>("");
-  const [skinHeadScore, setSkinHeadScore] = useState<string>("");
-  const [skinArmsScore, setSkinArmsScore] = useState<string>("");
-  const [urticariaScore, setUrticariaScore] = useState<string>("");
-  const [respiratoryScore, setRespiratoryScore] = useState<string>("");
+  const [cryingScore, setCryingScore] = useState<string | undefined>(undefined);
+  const [regurgitationScore, setRegurgitationScore] = useState<string | undefined>(undefined);
+  const [stoolScore, setStoolScore] = useState<string | undefined>(undefined);
+  const [skinHeadScore, setSkinHeadScore] = useState<string | undefined>(undefined);
+  const [skinArmsScore, setSkinArmsScore] = useState<string | undefined>(undefined);
+  const [urticariaScore, setUrticariaScore] = useState<string | undefined>(undefined);
+  const [respiratoryScore, setRespiratoryScore] = useState<string | undefined>(undefined);
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
 
@@ -460,14 +460,14 @@ const AssessmentForm = () => {
     setCountry("");
     setCity("");
     
-    // Clear all symptom scores - use empty string (the || undefined in Select handles clearing)
-    setCryingScore("");
-    setRegurgitationScore("");
-    setStoolScore("");
-    setSkinHeadScore("");
-    setSkinArmsScore("");
-    setUrticariaScore("");
-    setRespiratoryScore("");
+    // Clear all symptom scores - use undefined to properly clear Select components
+    setCryingScore(undefined);
+    setRegurgitationScore(undefined);
+    setStoolScore(undefined);
+    setSkinHeadScore(undefined);
+    setSkinArmsScore(undefined);
+    setUrticariaScore(undefined);
+    setRespiratoryScore(undefined);
     
     // Clear notes and consent
     setNotes("");
@@ -477,10 +477,7 @@ const AssessmentForm = () => {
     setSaved(false);
     setAssessmentId(null);
     
-    // Force a small delay to ensure state updates
-    setTimeout(() => {
-      toast.info("Form cleared - all fields reset");
-    }, 100);
+    toast.info("Form cleared - all fields reset");
   };
 
   const handleExport = () => {
@@ -1024,7 +1021,7 @@ const AssessmentForm = () => {
                     Crying <span className="text-red-500">*</span>
                   </Label>
                   <p className="text-xs text-muted-foreground mb-2">Assessed by parents ≥ 1 week duration.</p>
-                  <Select value={cryingScore || undefined} onValueChange={setCryingScore} disabled={saved}>
+                  <Select value={cryingScore} onValueChange={setCryingScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select crying duration" />
                     </SelectTrigger>
@@ -1046,7 +1043,7 @@ const AssessmentForm = () => {
                   </Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
                   <Select
-                    value={regurgitationScore || undefined}
+                    value={regurgitationScore}
                     onValueChange={setRegurgitationScore}
                     disabled={saved}
                   >
@@ -1078,7 +1075,7 @@ const AssessmentForm = () => {
                   <p className="text-xs text-muted-foreground mb-2">
                     Brussels Infant and Toddlers Stool Scale (BITSS).
                   </p>
-                  <Select value={stoolScore || undefined} onValueChange={setStoolScore} disabled={saved}>
+                  <Select value={stoolScore} onValueChange={setStoolScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select stool type" />
                     </SelectTrigger>
@@ -1100,7 +1097,7 @@ const AssessmentForm = () => {
                       <Label htmlFor="skin-head" className="text-sm font-normal">
                         Head/Neck/Trunk <span className="text-red-500">*</span>
                       </Label>
-                      <Select value={skinHeadScore || undefined} onValueChange={setSkinHeadScore} disabled={saved}>
+                      <Select value={skinHeadScore} onValueChange={setSkinHeadScore} disabled={saved}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select severity" />
                         </SelectTrigger>
@@ -1117,7 +1114,7 @@ const AssessmentForm = () => {
                       <Label htmlFor="skin-arms" className="text-sm font-normal">
                         Arms/Hands/Legs/Feet <span className="text-red-500">*</span>
                       </Label>
-                      <Select value={skinArmsScore || undefined} onValueChange={setSkinArmsScore} disabled={saved}>
+                      <Select value={skinArmsScore} onValueChange={setSkinArmsScore} disabled={saved}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select severity" />
                         </SelectTrigger>
@@ -1136,7 +1133,7 @@ const AssessmentForm = () => {
                   <Label htmlFor="urticaria">
                     Urticaria <span className="text-red-500">*</span>
                   </Label>
-                  <Select value={urticariaScore || undefined} onValueChange={setUrticariaScore} disabled={saved}>
+                  <Select value={urticariaScore} onValueChange={setUrticariaScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select urticaria" />
                     </SelectTrigger>
@@ -1152,7 +1149,7 @@ const AssessmentForm = () => {
                     Respiratory Symptoms <span className="text-red-500">*</span>
                   </Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
-                  <Select value={respiratoryScore || undefined} onValueChange={setRespiratoryScore} disabled={saved}>
+                  <Select value={respiratoryScore} onValueChange={setRespiratoryScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select respiratory symptoms" />
                     </SelectTrigger>

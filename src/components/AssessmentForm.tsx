@@ -628,7 +628,7 @@ const AssessmentForm = () => {
         "4": "Hard stools",
         "6": "Watery stools",
       };
-      return descriptions[score] || "";
+      return descriptions[score] || "Not recorded";
     };
 
     const getSkinDesc = (score: string) => {

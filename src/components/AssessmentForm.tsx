@@ -56,7 +56,7 @@ const assessmentSchema = z.object({
     .min(0, "Score cannot be negative")
     .max(6, "Urticaria score maximum is 6"),
   // Optional fields
-  patient_name: z.string().trim().min(1, "Patient name is required").max(100, "Patient name must be less than 100 characters"),
+  patient_name: z.string().trim().max(100, "Patient name must be less than 100 characters").nullable(),
   guardian_name: z.string().trim().max(100, "Guardian name must be less than 100 characters").nullable(),
   guardian_phone: z.string().trim().max(20, "Phone number must be less than 20 characters").nullable(),
   clinician_name: z.string().trim().max(100, "Clinician name must be less than 100 characters").nullable(),
@@ -332,7 +332,7 @@ const AssessmentForm = () => {
     }
 
     // Validate all required symptom fields are selected
-    if (!patientName || !cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country) {
+    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country) {
       toast.error("Please fill in all required fields before saving");
       return;
     }
@@ -342,7 +342,7 @@ const AssessmentForm = () => {
     try {
       // Prepare data for validation
       const formData = {
-        patient_name: patientName,
+        patient_name: patientName || null,
         patient_gender: gender,
         patient_age_months: parseInt(age) || 0,
         guardian_name: guardianName || null,
@@ -780,7 +780,7 @@ const AssessmentForm = () => {
               <p className="text-sm text-muted-foreground mb-4">Required fields marked with <span className="text-red-500">*</span></p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Patient Name <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="name">Patient Name</Label>
                   <Input
                     id="name"
                     placeholder="Patient name"

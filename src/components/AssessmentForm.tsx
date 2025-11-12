@@ -24,7 +24,7 @@ const assessmentSchema = z.object({
     .min(0, "Age cannot be negative")
     .max(240, "Age must be less than 240 months (20 years)"),
   country: z.string().trim().min(1, "Country is required").max(100, "Country must be less than 100 characters"),
-  city: z.string().trim().max(100, "City must be less than 100 characters").nullable(),
+  city: z.string().trim().max(100, "City must be less than 100 characters").optional().nullable(),
   crying_score: z
     .number()
     .int("Score must be a whole number")
@@ -332,7 +332,8 @@ const AssessmentForm = () => {
     }
 
     // Validate all required symptom fields are selected
-    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country) {
+    const isCityRequired = country === "Oman";
+    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country || (isCityRequired && !city)) {
       toast.error("Please fill in all required fields before saving");
       return;
     }
@@ -888,7 +889,7 @@ const AssessmentForm = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="city">City / Governorate <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="city">City / Governorate {country === "Oman" && <span className="text-red-500">*</span>}</Label>
                   <Select value={city} onValueChange={setCity} disabled={saved || country !== "Oman"}>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder={country === "Oman" ? "Select governorate" : "Select Oman first"} />

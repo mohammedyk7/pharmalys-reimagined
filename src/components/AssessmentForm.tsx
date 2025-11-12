@@ -578,8 +578,8 @@ const AssessmentForm = () => {
     const getRegurgitationDesc = (score: string) => {
       const descriptions: { [key: string]: string } = {
         "0": "0 to 2 episodes/day",
-        "1": "≥ 3 to ≤ 5 episodes of volume < 5ml",
-        "2": "> 5 episodes of > 3ml",
+        "1": "≥ 3 to ≤ 5 episodes of volume < 5 ml",
+        "2": "> 5 episodes of > 3 ml",
         "3": "> 5 episodes of ± half of the feeds in < half of the feeds",
         "4": "Continuous regurgitations of small volumes > 30 min after each feed",
         "5": "Regurgitation of half to complete volume of a feed in at least half of the feeds",
@@ -590,9 +590,9 @@ const AssessmentForm = () => {
 
     const getStoolDesc = (score: string) => {
       const descriptions: { [key: string]: string } = {
-        "0": "Type 1 and 4 (0)",
-        "3": "Type 2 and 3 (3)",
-        "6": "Type 5 and 6 (6)",
+        "0": "Type 1 and 4",
+        "3": "Type 2 and 3",
+        "6": "Type 5 and 6",
       };
       return descriptions[score] || "";
     };
@@ -669,7 +669,7 @@ const AssessmentForm = () => {
     doc.text("Urticaria:", margin, y);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...black);
-    doc.text(parseInt(urticariaScore) === 6 ? "Present (+6)" : "Not present (0)", symptomValueX, y);
+    doc.text(parseInt(urticariaScore) === 6 ? "Present" : "Not present", symptomValueX, y);
     y += 12;
 
     // Respiratory AFTER Urticaria
@@ -787,11 +787,12 @@ const AssessmentForm = () => {
                     placeholder="Patient name"
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value)}
+                    disabled={saved}
                   />
                 </div>
                 <div>
                   <Label htmlFor="gender">Gender <span className="text-red-500">*</span></Label>
-                  <Select value={gender} onValueChange={setGender}>
+                  <Select value={gender} onValueChange={setGender} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select..." />
                     </SelectTrigger>
@@ -803,12 +804,12 @@ const AssessmentForm = () => {
                 </div>
                 <div>
                   <Label htmlFor="age">Age (months) <span className="text-red-500">*</span></Label>
-                  <Input id="age" type="number" placeholder="0" value={age} onChange={(e) => setAge(e.target.value)} />
+                  <Input id="age" type="number" placeholder="0" value={age} onChange={(e) => setAge(e.target.value)} disabled={saved} />
                   <p className="text-xs text-muted-foreground mt-1">Use exact months (round to nearest if needed).</p>
                 </div>
                 <div>
                   <Label htmlFor="date">Date <span className="text-red-500">*</span></Label>
-                  <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                  <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={saved} />
                   <p className="text-xs text-muted-foreground mt-1">Defaults to today.</p>
                 </div>
                 <div>
@@ -818,6 +819,7 @@ const AssessmentForm = () => {
                     placeholder="Guardian name"
                     value={guardianName}
                     onChange={(e) => setGuardianName(e.target.value)}
+                    disabled={saved}
                   />
                 </div>
                 <div>
@@ -828,6 +830,7 @@ const AssessmentForm = () => {
                     placeholder="+1 234 567 8900"
                     value={guardianPhone}
                     onChange={(e) => setGuardianPhone(e.target.value)}
+                    disabled={saved}
                   />
                 </div>
               </div>
@@ -847,6 +850,7 @@ const AssessmentForm = () => {
                     placeholder="Full name"
                     value={clinicianName}
                     onChange={(e) => setClinicianName(e.target.value)}
+                    disabled={saved}
                   />
                   <p className="text-xs text-muted-foreground mt-1">Full name as it will appear on the report.</p>
                 </div>
@@ -857,6 +861,7 @@ const AssessmentForm = () => {
                     placeholder="Hospital name"
                     value={hospital}
                     onChange={(e) => setHospital(e.target.value)}
+                    disabled={saved}
                   />
                 </div>
                 <div>
@@ -869,6 +874,7 @@ const AssessmentForm = () => {
                         setCity("");
                       }
                     }}
+                    disabled={saved}
                   >
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Select country" />
@@ -884,7 +890,7 @@ const AssessmentForm = () => {
                 </div>
                 <div>
                   <Label htmlFor="city">City / Governorate <span className="text-red-500">*</span></Label>
-                  <Select value={city} onValueChange={setCity} disabled={country !== "Oman"}>
+                  <Select value={city} onValueChange={setCity} disabled={saved || country !== "Oman"}>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder={country === "Oman" ? "Select governorate" : "Select Oman first"} />
                     </SelectTrigger>
@@ -917,7 +923,7 @@ const AssessmentForm = () => {
                 <div>
                   <Label htmlFor="crying">Crying <span className="text-red-500">*</span></Label>
                   <p className="text-xs text-muted-foreground mb-2">Assessed by parents ≥ 1 week duration.</p>
-                  <Select value={cryingScore || undefined} onValueChange={setCryingScore}>
+                  <Select value={cryingScore || undefined} onValueChange={setCryingScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select crying duration" />
                     </SelectTrigger>
@@ -936,14 +942,14 @@ const AssessmentForm = () => {
                 <div>
                   <Label htmlFor="regurgitation">Regurgitation <span className="text-red-500">*</span></Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
-                  <Select value={regurgitationScore || undefined} onValueChange={setRegurgitationScore}>
+                  <Select value={regurgitationScore || undefined} onValueChange={setRegurgitationScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select regurgitation level" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="0">0 to 2 episodes/day</SelectItem>
-                      <SelectItem value="1">≥ 3 to ≤ 5 episodes of volume &lt; 5ml</SelectItem>
-                      <SelectItem value="2">&gt; 5 episodes of &gt; 3ml</SelectItem>
+                      <SelectItem value="1">≥ 3 to ≤ 5 episodes of volume &lt; 5 ml</SelectItem>
+                      <SelectItem value="2">&gt; 5 episodes of &gt; 3 ml</SelectItem>
                       <SelectItem value="3">
                         &gt; 5 episodes of ± half of the feeds in &lt; half of the feeds
                       </SelectItem>
@@ -965,7 +971,7 @@ const AssessmentForm = () => {
                   <p className="text-xs text-muted-foreground mb-2">
                     Brussels Infant and Toddlers Stool Scale (BITSS).
                   </p>
-                  <Select value={stoolScore || undefined} onValueChange={setStoolScore}>
+                  <Select value={stoolScore || undefined} onValueChange={setStoolScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select stool type" />
                     </SelectTrigger>
@@ -987,7 +993,7 @@ const AssessmentForm = () => {
                       <Label htmlFor="skin-head" className="text-sm font-normal">
                         Head/Neck/Trunk <span className="text-red-500">*</span>
                       </Label>
-                      <Select value={skinHeadScore || undefined} onValueChange={setSkinHeadScore}>
+                      <Select value={skinHeadScore || undefined} onValueChange={setSkinHeadScore} disabled={saved}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select severity" />
                         </SelectTrigger>
@@ -1004,7 +1010,7 @@ const AssessmentForm = () => {
                       <Label htmlFor="skin-arms" className="text-sm font-normal">
                         Arms/Hands/Legs/Feet <span className="text-red-500">*</span>
                       </Label>
-                      <Select value={skinArmsScore || undefined} onValueChange={setSkinArmsScore}>
+                      <Select value={skinArmsScore || undefined} onValueChange={setSkinArmsScore} disabled={saved}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select severity" />
                         </SelectTrigger>
@@ -1021,7 +1027,7 @@ const AssessmentForm = () => {
 
                 <div>
                   <Label htmlFor="urticaria">Urticaria <span className="text-red-500">*</span></Label>
-                  <Select value={urticariaScore || undefined} onValueChange={setUrticariaScore}>
+                  <Select value={urticariaScore || undefined} onValueChange={setUrticariaScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select urticaria" />
                     </SelectTrigger>
@@ -1035,7 +1041,7 @@ const AssessmentForm = () => {
                 <div>
                   <Label htmlFor="respiratory">Respiratory Symptoms <span className="text-red-500">*</span></Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
-                  <Select value={respiratoryScore || undefined} onValueChange={setRespiratoryScore}>
+                  <Select value={respiratoryScore || undefined} onValueChange={setRespiratoryScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select respiratory symptoms" />
                     </SelectTrigger>
@@ -1060,6 +1066,7 @@ const AssessmentForm = () => {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="min-h-[100px]"
+                disabled={saved}
               />
             </div>
 
@@ -1083,7 +1090,7 @@ const AssessmentForm = () => {
 
             {/* Consent */}
             <div className="flex items-start gap-3">
-              <Checkbox id="consent" checked={consent} onCheckedChange={(checked) => setConsent(checked as boolean)} />
+              <Checkbox id="consent" checked={consent} onCheckedChange={(checked) => setConsent(checked as boolean)} disabled={saved} />
               <label htmlFor="consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
                 I consent to the collection and secure storage of the information entered in this form for the purpose
                 of scientific research. I understand that this information will be used only for clinical assessment and

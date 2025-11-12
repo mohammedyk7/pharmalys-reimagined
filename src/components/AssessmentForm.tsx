@@ -332,7 +332,18 @@ const AssessmentForm = () => {
     }
 
     // Validate all required symptom fields are selected
-    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country) {
+    if (
+      !cryingScore ||
+      !regurgitationScore ||
+      !stoolScore ||
+      !skinHeadScore ||
+      !skinArmsScore ||
+      !urticariaScore ||
+      !respiratoryScore ||
+      !gender ||
+      !age ||
+      !country
+    ) {
       toast.error("Please fill in all required fields before saving");
       return;
     }
@@ -589,9 +600,10 @@ const AssessmentForm = () => {
 
     const getStoolDesc = (score: string) => {
       const descriptions: { [key: string]: string } = {
-        "0": "Type 1 and 4",
-        "3": "Type 2 and 3",
-        "6": "Type 5 and 6",
+        "0": "Formed stools",
+        "3": "Loose stools",
+        "4": "Hard stools",
+        "6": "Watery stools",
       };
       return descriptions[score] || "";
     };
@@ -777,7 +789,9 @@ const AssessmentForm = () => {
             {/* Patient Details */}
             <div>
               <h3 className="text-lg font-semibold mb-4">Patient Details</h3>
-              <p className="text-sm text-muted-foreground mb-4">Required fields marked with <span className="text-red-500">*</span></p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Required fields marked with <span className="text-red-500">*</span>
+              </p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="name">Patient Name</Label>
@@ -790,7 +804,9 @@ const AssessmentForm = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="gender">Gender <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="gender">
+                    Gender <span className="text-red-500">*</span>
+                  </Label>
                   <Select value={gender} onValueChange={setGender} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select..." />
@@ -802,13 +818,30 @@ const AssessmentForm = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="age">Age (months) <span className="text-red-500">*</span></Label>
-                  <Input id="age" type="number" placeholder="0" value={age} onChange={(e) => setAge(e.target.value)} disabled={saved} />
+                  <Label htmlFor="age">
+                    Age (months) <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    placeholder="0"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    disabled={saved}
+                  />
                   <p className="text-xs text-muted-foreground mt-1">Use exact months (round to nearest if needed).</p>
                 </div>
                 <div>
-                  <Label htmlFor="date">Date <span className="text-red-500">*</span></Label>
-                  <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} disabled={saved} />
+                  <Label htmlFor="date">
+                    Date <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    disabled={saved}
+                  />
                   <p className="text-xs text-muted-foreground mt-1">Defaults to today.</p>
                 </div>
                 <div>
@@ -840,7 +873,9 @@ const AssessmentForm = () => {
             {/* Clinician Details */}
             <div>
               <h3 className="text-lg font-semibold mb-4">Clinician Details</h3>
-              <p className="text-sm text-muted-foreground mb-4">Required fields marked with <span className="text-red-500">*</span></p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Required fields marked with <span className="text-red-500">*</span>
+              </p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="clinician">Clinician&apos;s Name</Label>
@@ -864,7 +899,9 @@ const AssessmentForm = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="country">Country <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="country">
+                    Country <span className="text-red-500">*</span>
+                  </Label>
                   <Select
                     value={country}
                     onValueChange={(value) => {
@@ -912,7 +949,9 @@ const AssessmentForm = () => {
 
             {/* Symptoms */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Symptoms <span className="text-red-500">*</span></h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Symptoms <span className="text-red-500">*</span>
+              </h3>
               <p className="text-sm text-muted-foreground mb-4">
                 All symptoms must be assessed - Assessed by parents without any obvious cause (≥1 week duration, no
                 infectious disease)
@@ -920,7 +959,9 @@ const AssessmentForm = () => {
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="crying">Crying <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="crying">
+                    Crying <span className="text-red-500">*</span>
+                  </Label>
                   <p className="text-xs text-muted-foreground mb-2">Assessed by parents ≥ 1 week duration.</p>
                   <Select value={cryingScore || undefined} onValueChange={setCryingScore} disabled={saved}>
                     <SelectTrigger>
@@ -939,9 +980,15 @@ const AssessmentForm = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="regurgitation">Regurgitation <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="regurgitation">
+                    Regurgitation <span className="text-red-500">*</span>
+                  </Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
-                  <Select value={regurgitationScore || undefined} onValueChange={setRegurgitationScore} disabled={saved}>
+                  <Select
+                    value={regurgitationScore || undefined}
+                    onValueChange={setRegurgitationScore}
+                    disabled={saved}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select regurgitation level" />
                     </SelectTrigger>
@@ -958,15 +1005,15 @@ const AssessmentForm = () => {
                       <SelectItem value="5">
                         Regurgitation of half to complete volume of a feed in at least half of the feeds
                       </SelectItem>
-                      <SelectItem value="6">
-                        Regurgitation of the complete feed after each feeding
-                      </SelectItem>
+                      <SelectItem value="6">Regurgitation of the complete feed after each feeding</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <Label htmlFor="stool">Stools <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="stool">
+                    Stools <span className="text-red-500">*</span>
+                  </Label>
                   <p className="text-xs text-muted-foreground mb-2">
                     Brussels Infant and Toddlers Stool Scale (BITSS).
                   </p>
@@ -975,10 +1022,10 @@ const AssessmentForm = () => {
                       <SelectValue placeholder="Select stool type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="4">Type 1 - Hard stools</SelectItem>
-                      <SelectItem value="0">Type 4 - Formed stools</SelectItem>
-                      <SelectItem value="3">Type 2 and 3 - Loose stools</SelectItem>
-                      <SelectItem value="6">Type 5 and 6 - Watery stools</SelectItem>
+                      <SelectItem value="4">Hard stools</SelectItem>
+                      <SelectItem value="0">Formed stools</SelectItem>
+                      <SelectItem value="3">Loose stools</SelectItem>
+                      <SelectItem value="6">Watery stools</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1025,7 +1072,9 @@ const AssessmentForm = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="urticaria">Urticaria <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="urticaria">
+                    Urticaria <span className="text-red-500">*</span>
+                  </Label>
                   <Select value={urticariaScore || undefined} onValueChange={setUrticariaScore} disabled={saved}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select urticaria" />
@@ -1038,7 +1087,9 @@ const AssessmentForm = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="respiratory">Respiratory Symptoms <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="respiratory">
+                    Respiratory Symptoms <span className="text-red-500">*</span>
+                  </Label>
                   <p className="text-xs text-muted-foreground mb-2">≥ 1 week duration.</p>
                   <Select value={respiratoryScore || undefined} onValueChange={setRespiratoryScore} disabled={saved}>
                     <SelectTrigger>
@@ -1089,7 +1140,12 @@ const AssessmentForm = () => {
 
             {/* Consent */}
             <div className="flex items-start gap-3">
-              <Checkbox id="consent" checked={consent} onCheckedChange={(checked) => setConsent(checked as boolean)} disabled={saved} />
+              <Checkbox
+                id="consent"
+                checked={consent}
+                onCheckedChange={(checked) => setConsent(checked as boolean)}
+                disabled={saved}
+              />
               <label htmlFor="consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
                 I consent to the collection and secure storage of the information entered in this form for the purpose
                 of scientific research. I understand that this information will be used only for clinical assessment and

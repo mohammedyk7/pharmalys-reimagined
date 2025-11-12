@@ -332,8 +332,7 @@ const AssessmentForm = () => {
     }
 
     // Validate all required symptom fields are selected
-    const isCityRequired = country === "Oman";
-    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country || (isCityRequired && !city)) {
+    if (!cryingScore || !regurgitationScore || !stoolScore || !skinHeadScore || !skinArmsScore || !urticariaScore || !respiratoryScore || !gender || !age || !country) {
       toast.error("Please fill in all required fields before saving");
       return;
     }
@@ -889,7 +888,7 @@ const AssessmentForm = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="city">City / Governorate {country === "Oman" && <span className="text-red-500">*</span>}</Label>
+                  <Label htmlFor="city">City / Governorate</Label>
                   <Select value={city} onValueChange={setCity} disabled={saved || country !== "Oman"}>
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder={country === "Oman" ? "Select governorate" : "Select Oman first"} />

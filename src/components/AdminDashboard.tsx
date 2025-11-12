@@ -6,7 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Download } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import * as XLSX from 'xlsx';
 import UserManagement from "./UserManagement";
 
@@ -39,6 +50,7 @@ interface Assessment {
 const AdminDashboard = () => {
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchAssessments();
@@ -93,6 +105,26 @@ const AdminDashboard = () => {
     XLSX.writeFile(workbook, fileName);
     
     toast.success('Excel file downloaded successfully');
+  };
+
+  const clearAllAssessments = async () => {
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("assessments")
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+
+      if (error) throw error;
+
+      setAssessments([]);
+      toast.success('All assessments have been cleared');
+    } catch (error: any) {
+      toast.error('Failed to clear assessments');
+      console.error(error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
 
@@ -164,10 +196,38 @@ const AdminDashboard = () => {
                   <CardTitle>All Assessments</CardTitle>
                   <CardDescription>Complete list of patient assessments</CardDescription>
                 </div>
-                <Button onClick={exportToExcel} variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export to Excel
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={exportToExcel} variant="outline" size="sm">
+                    <Download className="h-4 w-4 mr-2" />
+                    Export to Excel
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm" disabled={assessments.length === 0}>
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Clear All
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete all {stats.total} assessments from the database.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={clearAllAssessments}
+                          disabled={isDeleting}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          {isDeleting ? "Deleting..." : "Delete All"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
             </CardHeader>
             <CardContent>

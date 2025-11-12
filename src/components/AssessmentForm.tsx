@@ -922,13 +922,13 @@ const AssessmentForm = () => {
                       <SelectValue placeholder="Select crying duration" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">≤ 1 hour per day (0)</SelectItem>
-                      <SelectItem value="1">1 to 1.5 hours per day (1)</SelectItem>
-                      <SelectItem value="2">1.5 to 2 hours per day (2)</SelectItem>
-                      <SelectItem value="3">2 to 3 hours per day (3)</SelectItem>
-                      <SelectItem value="4">3 to 4 hours per day (4)</SelectItem>
-                      <SelectItem value="5">4 to 5 hours per day (5)</SelectItem>
-                      <SelectItem value="6">≥ 5 hours per day (6)</SelectItem>
+                      <SelectItem value="0">≤ 1 hour per day</SelectItem>
+                      <SelectItem value="1">1 to 1.5 hours per day</SelectItem>
+                      <SelectItem value="2">1.5 to 2 hours per day</SelectItem>
+                      <SelectItem value="3">2 to 3 hours per day</SelectItem>
+                      <SelectItem value="4">3 to 4 hours per day</SelectItem>
+                      <SelectItem value="5">4 to 5 hours per day</SelectItem>
+                      <SelectItem value="6">≥ 5 hours per day</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -941,20 +941,20 @@ const AssessmentForm = () => {
                       <SelectValue placeholder="Select regurgitation level" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">0 to 2 episodes/day (0)</SelectItem>
-                      <SelectItem value="1">≥ 3 to ≤ 5 episodes of volume &lt; 5ml (1)</SelectItem>
-                      <SelectItem value="2">&gt; 5 episodes of &gt; 3ml (2)</SelectItem>
+                      <SelectItem value="0">0 to 2 episodes/day</SelectItem>
+                      <SelectItem value="1">≥ 3 to ≤ 5 episodes of volume &lt; 5ml</SelectItem>
+                      <SelectItem value="2">&gt; 5 episodes of &gt; 3ml</SelectItem>
                       <SelectItem value="3">
-                        &gt; 5 episodes of ± half of the feeds in &lt; half of the feeds (3)
+                        &gt; 5 episodes of ± half of the feeds in &lt; half of the feeds
                       </SelectItem>
                       <SelectItem value="4">
-                        Continuous regurgitations of small volumes &gt; 30 min after each feed (4)
+                        Continuous regurgitations of small volumes &gt; 30 min after each feed
                       </SelectItem>
                       <SelectItem value="5">
-                        Regurgitation of half to complete volume of a feed in at least half of the feeds (5)
+                        Regurgitation of half to complete volume of a feed in at least half of the feeds
                       </SelectItem>
                       <SelectItem value="6">
-                        Regurgitation of the complete feed after each feeding (6)
+                        Regurgitation of the complete feed after each feeding
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -970,9 +970,10 @@ const AssessmentForm = () => {
                       <SelectValue placeholder="Select stool type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">Type 1 and 4 (0)</SelectItem>
-                      <SelectItem value="3">Type 2 and 3 (3)</SelectItem>
-                      <SelectItem value="6">Type 5 and 6 (6)</SelectItem>
+                      <SelectItem value="4">Hard stools</SelectItem>
+                      <SelectItem value="0">Formed stools</SelectItem>
+                      <SelectItem value="4">Loose stools</SelectItem>
+                      <SelectItem value="6">Watery stools</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -991,10 +992,10 @@ const AssessmentForm = () => {
                           <SelectValue placeholder="Select severity" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Absent (0)</SelectItem>
-                          <SelectItem value="2">Mild (2)</SelectItem>
-                          <SelectItem value="4">Moderate (4)</SelectItem>
-                          <SelectItem value="6">Severe (6)</SelectItem>
+                          <SelectItem value="0">Absent</SelectItem>
+                          <SelectItem value="1">Mild</SelectItem>
+                          <SelectItem value="2">Moderate</SelectItem>
+                          <SelectItem value="3">Severe</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1008,10 +1009,10 @@ const AssessmentForm = () => {
                           <SelectValue placeholder="Select severity" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Absent (0)</SelectItem>
-                          <SelectItem value="2">Mild (2)</SelectItem>
-                          <SelectItem value="4">Moderate (4)</SelectItem>
-                          <SelectItem value="6">Severe (6)</SelectItem>
+                          <SelectItem value="0">Absent</SelectItem>
+                          <SelectItem value="1">Mild</SelectItem>
+                          <SelectItem value="2">Moderate</SelectItem>
+                          <SelectItem value="3">Severe</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1025,8 +1026,8 @@ const AssessmentForm = () => {
                       <SelectValue placeholder="Select urticaria" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">Not present (0)</SelectItem>
-                      <SelectItem value="6">Present (+6)</SelectItem>
+                      <SelectItem value="0">Not present</SelectItem>
+                      <SelectItem value="6">Present</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1039,10 +1040,10 @@ const AssessmentForm = () => {
                       <SelectValue placeholder="Select respiratory symptoms" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0">No respiratory symptoms (0)</SelectItem>
-                      <SelectItem value="1">Slight symptoms (1)</SelectItem>
-                      <SelectItem value="2">Mild symptoms (2)</SelectItem>
-                      <SelectItem value="3">Severe symptoms (3)</SelectItem>
+                      <SelectItem value="0">No respiratory symptoms</SelectItem>
+                      <SelectItem value="1">Slight symptoms</SelectItem>
+                      <SelectItem value="2">Mild symptoms</SelectItem>
+                      <SelectItem value="3">Severe symptoms</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

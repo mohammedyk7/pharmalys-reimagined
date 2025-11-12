@@ -447,6 +447,39 @@ const AssessmentForm = () => {
     }
   };
 
+  const handleReset = () => {
+    // Clear all form fields
+    setPatientName("");
+    setGender("");
+    setAge("");
+    setDate(new Date().toISOString().split("T")[0]);
+    setGuardianName("");
+    setGuardianPhone("");
+    setClinicianName("");
+    setHospital("");
+    setCountry("");
+    setCity("");
+    
+    // Clear all symptom scores
+    setCryingScore("");
+    setRegurgitationScore("");
+    setStoolScore("");
+    setSkinHeadScore("");
+    setSkinArmsScore("");
+    setUrticariaScore("");
+    setRespiratoryScore("");
+    
+    // Clear notes and consent
+    setNotes("");
+    setConsent(false);
+    
+    // Reset saved state
+    setSaved(false);
+    setAssessmentId(null);
+    
+    toast.info("Form cleared - all fields reset");
+  };
+
   const handleExport = () => {
     if (!saved) {
       toast.error("Please save the assessment first");
@@ -1190,33 +1223,7 @@ const AssessmentForm = () => {
                 <Button onClick={handleExport} disabled={!saved} variant="outline">
                   Export PDF
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setPatientName("");
-                    setGender("");
-                    setAge("");
-                    setDate(new Date().toISOString().split("T")[0]);
-                    setGuardianName("");
-                    setGuardianPhone("");
-                    setClinicianName("");
-                    setHospital("");
-                    setCountry("");
-                    setCity("");
-                    setCryingScore("");
-                    setRegurgitationScore("");
-                    setStoolScore("");
-                    setSkinHeadScore("");
-                    setSkinArmsScore("");
-                    setUrticariaScore("");
-                    setRespiratoryScore("");
-                    setNotes("");
-                    setConsent(false);
-                    setSaved(false);
-                    setAssessmentId(null);
-                    toast.info("Form cleared");
-                  }}
-                >
+                <Button variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
               </div>

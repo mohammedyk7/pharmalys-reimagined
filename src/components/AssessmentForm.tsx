@@ -94,13 +94,13 @@ const AssessmentForm = () => {
   const [hospital, setHospital] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
-  const [cryingScore, setCryingScore] = useState<string | undefined>(undefined);
-  const [regurgitationScore, setRegurgitationScore] = useState<string | undefined>(undefined);
-  const [stoolScore, setStoolScore] = useState<string | undefined>(undefined);
-  const [skinHeadScore, setSkinHeadScore] = useState<string | undefined>(undefined);
-  const [skinArmsScore, setSkinArmsScore] = useState<string | undefined>(undefined);
-  const [urticariaScore, setUrticariaScore] = useState<string | undefined>(undefined);
-  const [respiratoryScore, setRespiratoryScore] = useState<string | undefined>(undefined);
+  const [cryingScore, setCryingScore] = useState("");
+  const [regurgitationScore, setRegurgitationScore] = useState("");
+  const [stoolScore, setStoolScore] = useState("");
+  const [skinHeadScore, setSkinHeadScore] = useState("");
+  const [skinArmsScore, setSkinArmsScore] = useState("");
+  const [urticariaScore, setUrticariaScore] = useState("");
+  const [respiratoryScore, setRespiratoryScore] = useState("");
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
 
@@ -460,14 +460,14 @@ const AssessmentForm = () => {
     setCountry("");
     setCity("");
     
-    // Clear all symptom scores - use undefined to properly clear Select components
-    setCryingScore(undefined);
-    setRegurgitationScore(undefined);
-    setStoolScore(undefined);
-    setSkinHeadScore(undefined);
-    setSkinArmsScore(undefined);
-    setUrticariaScore(undefined);
-    setRespiratoryScore(undefined);
+    // Clear all symptom scores - use empty string for controlled Select components
+    setCryingScore("");
+    setRegurgitationScore("");
+    setStoolScore("");
+    setSkinHeadScore("");
+    setSkinArmsScore("");
+    setUrticariaScore("");
+    setRespiratoryScore("");
     
     // Clear notes and consent
     setNotes("");

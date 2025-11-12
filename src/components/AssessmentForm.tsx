@@ -94,13 +94,13 @@ const AssessmentForm = () => {
   const [hospital, setHospital] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
-  const [cryingScore, setCryingScore] = useState("");
-  const [regurgitationScore, setRegurgitationScore] = useState("");
-  const [stoolScore, setStoolScore] = useState("");
-  const [skinHeadScore, setSkinHeadScore] = useState("");
-  const [skinArmsScore, setSkinArmsScore] = useState("");
-  const [urticariaScore, setUrticariaScore] = useState("");
-  const [respiratoryScore, setRespiratoryScore] = useState("");
+  const [cryingScore, setCryingScore] = useState<string>("");
+  const [regurgitationScore, setRegurgitationScore] = useState<string>("");
+  const [stoolScore, setStoolScore] = useState<string>("");
+  const [skinHeadScore, setSkinHeadScore] = useState<string>("");
+  const [skinArmsScore, setSkinArmsScore] = useState<string>("");
+  const [urticariaScore, setUrticariaScore] = useState<string>("");
+  const [respiratoryScore, setRespiratoryScore] = useState<string>("");
   const [notes, setNotes] = useState("");
   const [consent, setConsent] = useState(false);
 
@@ -460,7 +460,7 @@ const AssessmentForm = () => {
     setCountry("");
     setCity("");
     
-    // Clear all symptom scores
+    // Clear all symptom scores - use empty string (the || undefined in Select handles clearing)
     setCryingScore("");
     setRegurgitationScore("");
     setStoolScore("");
@@ -477,7 +477,10 @@ const AssessmentForm = () => {
     setSaved(false);
     setAssessmentId(null);
     
-    toast.info("Form cleared - all fields reset");
+    // Force a small delay to ensure state updates
+    setTimeout(() => {
+      toast.info("Form cleared - all fields reset");
+    }, 100);
   };
 
   const handleExport = () => {

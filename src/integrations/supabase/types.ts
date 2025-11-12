@@ -40,6 +40,7 @@ export type Database = {
           total_score: number | null
           updated_at: string
           urticaria_present: boolean | null
+          urticaria_score: number
           user_id: string | null
         }
         Insert: {
@@ -67,6 +68,7 @@ export type Database = {
           total_score?: number | null
           updated_at?: string
           urticaria_present?: boolean | null
+          urticaria_score?: number
           user_id?: string | null
         }
         Update: {
@@ -94,6 +96,7 @@ export type Database = {
           total_score?: number | null
           updated_at?: string
           urticaria_present?: boolean | null
+          urticaria_score?: number
           user_id?: string | null
         }
         Relationships: []

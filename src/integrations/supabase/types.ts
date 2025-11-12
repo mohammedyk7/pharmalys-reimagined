@@ -18,19 +18,19 @@ export type Database = {
         Row: {
           assessment_date: string
           city: string | null
-          clinician_name: string
+          clinician_name: string | null
           country: string | null
           created_at: string
           crying_score: number
-          guardian_name: string
-          guardian_phone: string
-          hospital_clinic: string
+          guardian_name: string | null
+          guardian_phone: string | null
+          hospital_clinic: string | null
           id: string
           location: string | null
           notes: string | null
           patient_age_months: number
           patient_gender: string
-          patient_name: string
+          patient_name: string | null
           regurgitation_score: number
           respiratory_score: number
           skin_arms_hands_legs_feet_score: number | null
@@ -46,19 +46,19 @@ export type Database = {
         Insert: {
           assessment_date: string
           city?: string | null
-          clinician_name: string
+          clinician_name?: string | null
           country?: string | null
           created_at?: string
           crying_score: number
-          guardian_name: string
-          guardian_phone: string
-          hospital_clinic: string
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          hospital_clinic?: string | null
           id?: string
           location?: string | null
           notes?: string | null
           patient_age_months: number
           patient_gender: string
-          patient_name: string
+          patient_name?: string | null
           regurgitation_score: number
           respiratory_score: number
           skin_arms_hands_legs_feet_score?: number | null
@@ -74,19 +74,19 @@ export type Database = {
         Update: {
           assessment_date?: string
           city?: string | null
-          clinician_name?: string
+          clinician_name?: string | null
           country?: string | null
           created_at?: string
           crying_score?: number
-          guardian_name?: string
-          guardian_phone?: string
-          hospital_clinic?: string
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          hospital_clinic?: string | null
           id?: string
           location?: string | null
           notes?: string | null
           patient_age_months?: number
           patient_gender?: string
-          patient_name?: string
+          patient_name?: string | null
           regurgitation_score?: number
           respiratory_score?: number
           skin_arms_hands_legs_feet_score?: number | null

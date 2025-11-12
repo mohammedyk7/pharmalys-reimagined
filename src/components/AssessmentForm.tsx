@@ -122,7 +122,7 @@ const AssessmentForm = () => {
     } else {
       return {
         text: "May be suggestive of cow's milk-related symptoms and could potentially be CMA",
-        recommendation: "Consider referral and elimination diet",
+        recommendation: "Consider elimination diet and/or eHF",
       };
     }
   };
